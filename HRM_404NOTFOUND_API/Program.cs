@@ -1,5 +1,6 @@
 using GroupProject_HRM_Api.Middlewares;
 using GroupProject_HRM_Library.Infrastructure;
+using GroupProject_HRM_Library.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.AddControllers()
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-//builder.Services.AddAutoMapper(typeof(ProductProfile), typeof(CategoryProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 

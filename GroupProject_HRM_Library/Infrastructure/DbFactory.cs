@@ -9,7 +9,7 @@ namespace GroupProject_HRM_Library.Infrastructure
 {
     public class DbFactory
     {
-        private MyStoreContext _dbContext;
+        private HumanResourceManagementContext _dbContext;
 
         private DbFactory()
         {
@@ -31,11 +31,11 @@ namespace GroupProject_HRM_Library.Infrastructure
             }
         }
 
-        public MyStoreContext InitDbContext()
+        public HumanResourceManagementContext InitDbContext()
         {
             if (_dbContext == null)
             {
-                _dbContext = new MyStoreContext();
+                _dbContext = new HumanResourceManagementContext();
             }
             return _dbContext;
         }

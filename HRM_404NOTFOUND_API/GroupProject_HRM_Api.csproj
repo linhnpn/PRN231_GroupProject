@@ -14,4 +14,8 @@
     <Folder Include="Common\Errors\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GroupProject_HRM_Library\GroupProject_HRM_Library.csproj" />
+  </ItemGroup>
+
 </Project>

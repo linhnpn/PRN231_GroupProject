@@ -22,6 +22,9 @@ namespace GroupProject_HRM_Library.Models
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<EmployeeProject> EmployeeProjects { get; set;}
         public virtual ICollection<Payroll> Payrolls { get; set;}
+        public virtual ICollection<LeaveLog> LeaveLogs { get; set; }
+        public virtual ICollection<OvertimeLog> OvertimeLogs { get; set; }
+        public virtual ICollection<Bonus> Bonuses { get; set; }
 
     }
 }

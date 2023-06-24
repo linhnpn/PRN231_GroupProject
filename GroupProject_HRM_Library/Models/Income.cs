@@ -12,9 +12,6 @@ namespace GroupProject_HRM_Library.Models
         public decimal PreviousRentIncome { get; set; }
         public decimal AfterRentIncome { get; set; }
         public int EmployeeID { get; set; }
-        public Employee Employee { get; set; }
-        public virtual ICollection<LeaveLog> LeaveLogs { get; set; }
-        public virtual ICollection<OvertimeLog> OvertimeLogs { get; set; }
-        public virtual ICollection<Bonus> Bonuses { get; set; }
+        public Employee Employee { get; set; }        
     }
 }

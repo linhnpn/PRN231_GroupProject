@@ -41,9 +41,9 @@ namespace GroupProject_HRM_Library.Models
             {
                 entity.HasKey(e => e.BonusID);
 
-                entity.HasOne(e => e.Income)
+                entity.HasOne(e => e.Employee)
                     .WithMany(i => i.Bonuses)
-                    .HasForeignKey(e => e.IncomeID);
+                    .HasForeignKey(e => e.EmployeeID);
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -81,9 +81,9 @@ namespace GroupProject_HRM_Library.Models
             {
                 entity.HasKey(e => e.LeaveLogID);
 
-                entity.HasOne(e => e.Income)
+                entity.HasOne(e => e.Employee)
                     .WithMany(l => l.LeaveLogs)
-                    .HasForeignKey(e => e.IncomeID);
+                    .HasForeignKey(e => e.EmployeeID);
             });
 
             modelBuilder.Entity<Notification>(entity =>
@@ -99,9 +99,9 @@ namespace GroupProject_HRM_Library.Models
             {
                 entity.HasKey(e => e.OvertimeID);
 
-                entity.HasOne(e => e.Income)
+                entity.HasOne(e => e.Employee)
                     .WithMany(o => o.OvertimeLogs)
-                    .HasForeignKey(e => e.IncomeID);
+                    .HasForeignKey(e => e.EmployeeID);
             });
 
             modelBuilder.Entity<Payroll>(entity =>

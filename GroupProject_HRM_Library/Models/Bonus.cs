@@ -10,7 +10,7 @@ namespace GroupProject_HRM_Library.Models
         public string Description { get; set; }
         public decimal BonusValue { get; set; }
         public DateTime Timestamp { get; set; }
-        public int IncomeID { get; set; }
-        public Income Income { get; set; }
+        public int EmployeeID { get; set; }
+        public Employee Employee { get; set; }
     }
 }

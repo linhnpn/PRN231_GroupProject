@@ -11,7 +11,7 @@ namespace GroupProject_HRM_Library.Models
         public string Reason { get; set; }
         public int LeaveLogStatus { get; set; }
         public string RejectReson { get; set; }
-        public int IncomeID { get; set; }
-        public Income Income { get; set; }
+        public int EmployeeID { get; set; }
+        public Employee Employee { get; set; }
     }
 }

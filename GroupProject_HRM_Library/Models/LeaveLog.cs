@@ -9,6 +9,7 @@ namespace GroupProject_HRM_Library.Models
         public int LeaveLogID { get; set; }
         public DateTime Date { get; set; }
         public string Reason { get; set; }
+        public string LinkProof { get; set; }
         public int LeaveLogStatus { get; set; }
         public string RejectReson { get; set; }
         public int EmployeeID { get; set; }

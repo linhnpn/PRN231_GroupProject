@@ -29,6 +29,7 @@ namespace GroupProject_HRM_Api.Middlewares
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)StatusCodes.Status500InternalServerError;
+            bool check = true;
             switch (ex)
             {
                 case NotFoundException _:
@@ -37,17 +38,22 @@ namespace GroupProject_HRM_Api.Middlewares
                 case BadRequestException _:
                     context.Response.StatusCode = (int)StatusCodes.Status400BadRequest;
                     break;
+                default:
+                    _ = context.Response.WriteAsync(JsonConvert.SerializeObject(ex.ToString()));
+                    check = false;
+                    break;
             }
 
-            Error error = new Error()
+            if (check)
             {
-                StatusCode = context.Response.StatusCode,
-                Message = JsonConvert.DeserializeObject<List<ErrorDetail>>(ex.Message)
-            };
+                Error error = new Error()
+                {
+                    StatusCode = context.Response.StatusCode,
+                    Message = JsonConvert.DeserializeObject<List<ErrorDetail>>(ex.Message)
+                };
 
-
-
-            await context.Response.WriteAsync(error.ToString());
+                await context.Response.WriteAsync(error.ToString());
+            }
         }
     }
 }

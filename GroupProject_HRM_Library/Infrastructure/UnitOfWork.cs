@@ -1,4 +1,5 @@
 ﻿
+using GroupProject_HRM_Library.DAO;
 using GroupProject_HRM_Library.Models;
 
 namespace GroupProject_HRM_Library.Infrastructure
@@ -6,7 +7,8 @@ namespace GroupProject_HRM_Library.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         private HumanResourceManagementContext _dbContext;
-        //private ProductDAO productDAO;
+        private EmployeeDAO employeeDAO;
+        private LeaveLogDAO leaveLogDAO;
         public UnitOfWork()
         {
             if (this._dbContext == null)
@@ -15,17 +17,29 @@ namespace GroupProject_HRM_Library.Infrastructure
             }
         }
 
-        //public ProductDAO ProductDAO
-        //{
-        //    get
-        //    {
-        //        if (this.productDAO == null)
-        //        {
-        //            this.productDAO = new ProductDAO(this._dbContext);
-        //        }
-        //        return this.productDAO;
-        //    }
-        //}
+        public EmployeeDAO EmployeeDAO
+        {
+            get
+            {
+                if (this.employeeDAO == null)
+                {
+                    this.employeeDAO = new EmployeeDAO(this._dbContext);
+                }
+                return this.employeeDAO;
+            }
+        }
+
+        public LeaveLogDAO LeaveLogDAO
+        {
+            get
+            {
+                if (this.leaveLogDAO == null)
+                {
+                    this.leaveLogDAO = new LeaveLogDAO(this._dbContext);
+                }
+                return this.leaveLogDAO;
+            }
+        }
 
         public void Commit()
         {

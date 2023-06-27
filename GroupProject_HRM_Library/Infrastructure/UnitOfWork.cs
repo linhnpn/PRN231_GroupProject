@@ -9,11 +9,24 @@ namespace GroupProject_HRM_Library.Infrastructure
         private HumanResourceManagementContext _dbContext;
         private EmployeeDAO employeeDAO;
         private LeaveLogDAO leaveLogDAO;
+        private IncomeDAO incomeDAO;
+        private OvertimeLogDAO overtimeLogDAO;
         public UnitOfWork()
         {
             if (this._dbContext == null)
             {
                 this._dbContext = DbFactory.Instance.InitDbContext();
+            }
+        }
+        public OvertimeLogDAO OvertimeLogDAO
+        {
+            get
+            {
+                if (this.overtimeLogDAO == null)
+                {
+                    this.overtimeLogDAO = new OvertimeLogDAO(this._dbContext);
+                }
+                return this.overtimeLogDAO;
             }
         }
 
@@ -26,6 +39,18 @@ namespace GroupProject_HRM_Library.Infrastructure
                     this.employeeDAO = new EmployeeDAO(this._dbContext);
                 }
                 return this.employeeDAO;
+            }
+        }
+
+        public IncomeDAO IncomeDAO
+        {
+            get
+            {
+                if (this.incomeDAO == null)
+                {
+                    this.incomeDAO = new IncomeDAO(this._dbContext);
+                }
+                return this.incomeDAO;
             }
         }
 

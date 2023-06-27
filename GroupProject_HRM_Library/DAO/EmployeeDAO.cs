@@ -1,4 +1,5 @@
-﻿using GroupProject_HRM_Library.Models;
+﻿using GroupProject_HRM_Library.Enums;
+using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,22 @@ namespace GroupProject_HRM_Library.DAO
             try
             {
                 return await _dbContext.Employees.FirstOrDefaultAsync(x => x.EmployeeID == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> GetProfileByIDAsync(int id)
+        {
+            try
+            {
+                return await _dbContext.Employees
+                    .Include(x => x.EmployeeProjects)
+                    .ThenInclude(ep => ep.Project)
+                    .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.Status.CURRENT))
+                    .FirstOrDefaultAsync(x => x.EmployeeID == id);
             }
             catch (Exception ex)
             {

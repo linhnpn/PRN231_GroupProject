@@ -12,6 +12,7 @@ namespace GroupProject_HRM_Library.Enums
         {
             WAITING = 0,
             APPROVE = 1,
+            ABSENT_WITHOUT_LEAVE= 2,
             REJECT = -1
         }
     }

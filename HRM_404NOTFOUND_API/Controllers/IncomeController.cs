@@ -1,6 +1,9 @@
 ﻿using GroupProject_HRM_Library.DTOs.Income;
+using GroupProject_HRM_Library.Errors;
+using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GroupProject_HRM_Api.Controllers
 {
@@ -23,6 +26,38 @@ namespace GroupProject_HRM_Api.Controllers
             {
                 Success = true,
                 Data = getIncomeEmployeeResponses
+            });
+        }
+
+        [HttpPost, ActionName("Post Income")]
+        public async Task<IActionResult> PostIncomeAsync([FromBody] List<CreateIncomeEmployeeResponse> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = new List<ErrorDetail>();
+                foreach (var pair in ModelState)
+                {
+                    if (pair.Value.Errors.Count > 0)
+                    {
+                        ErrorDetail errorDetail = new ErrorDetail()
+                        {
+                            FieldNameError = pair.Key,
+                            DescriptionError = pair.Value.Errors.Select(error => error.ErrorMessage).ToList()
+                        };
+                        errors.Add(errorDetail);
+                    }
+                }
+
+                var message = JsonConvert.SerializeObject(errors);
+                throw new BadRequestException(message);
+
+            }
+
+            await this._incomeRepository.CreateIncomeAsync(request);
+            return Ok(new
+            {
+                Success = true,
+                Data = "Created income successfully."
             });
         }
     }

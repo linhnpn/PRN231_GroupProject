@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+<title></title>
+
+
+<div id="example">
+    <div id="incomeGrid"></div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#incomeGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        $.ajax({
+                            url: "https://localhost:5000/api/Income/1",
+                            type: "GET",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    }
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "incomeID",
+                        fields: {
+                            incomeID: { type: "number" },
+                            startDate: { type: "date" },
+                            endDate: { type: "date" },
+                            previousRentIncome: { type: "number" },
+                            afterRentIncome: { type: "number" }
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            groupable: true,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "incomeID",
+                title: "ID",
+                filterable: { multi: true }
+            }, {
+                field: "startDate",
+                title: "Start Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+                
+            }, {
+                field: "endDate",
+                title: "End Date",
+                filterable: {
+                    multi: true
+                },
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "previousRentIncome",
+                title: "Previous Rent Income",
+                filterable: { multi: true },
+            },
+            {
+                field: "afterRentIncome",
+                title: "After Rent Income",
+                filterable: { multi: true }
+            }]
+        });
+    });
+</script>

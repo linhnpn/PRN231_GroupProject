@@ -2,7 +2,6 @@
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 

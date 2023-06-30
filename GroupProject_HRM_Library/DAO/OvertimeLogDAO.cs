@@ -63,6 +63,29 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
+        public async Task<List<OvertimeLog>> GetOvertimeLogResponsesByEmplIDAndDateAsync
+                                            (int emplID, int? status, DateTime start, DateTime end)
+        {
+            try
+            {
+                if (status == null)
+                {
+                    return await this._dbContext.OvertimeLogs
+                                            .Include(x => x.Employee)
+                                            .Where(x => x.EmployeeID == emplID && x.OverTimeDate > start && x.OverTimeDate < end)
+                                            .ToListAsync();
+                }
+                return await this._dbContext.OvertimeLogs
+                                            .Include(x => x.Employee)
+                                            .Where(x => x.EmployeeID == emplID && x.OverTimeDate > start && x.OverTimeDate < end && x.OvertimeLogStatus == status)
+                                            .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<List<OvertimeLog>> GetOvertimeLogResponsesByProjectIDAsync(int projectID, int? status)
         {
             try

@@ -27,5 +27,29 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<Income> GetLastIncomeByEmplIDAsync(int id)
+        {
+            try
+            {
+                return await _dbContext.Incomes.OrderBy(x => x.EndDate).LastOrDefaultAsync(x => x.EmployeeID == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task CreateIncomeAsync(Income income)
+        {
+            try
+            {
+                await this._dbContext.Incomes.AddAsync(income);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

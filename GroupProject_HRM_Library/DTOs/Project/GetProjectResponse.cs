@@ -12,6 +12,6 @@ namespace GroupProject_HRM_Library.DTOs.Project
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
         public int ProjectStatus { get; set; }
-        public decimal ProjectBonus { get; set; };
+        public decimal ProjectBonus { get; set; }
     }
 }

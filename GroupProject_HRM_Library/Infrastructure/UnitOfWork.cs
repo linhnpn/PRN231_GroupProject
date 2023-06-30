@@ -11,6 +11,11 @@ namespace GroupProject_HRM_Library.Infrastructure
         private LeaveLogDAO leaveLogDAO;
         private IncomeDAO incomeDAO;
         private OvertimeLogDAO overtimeLogDAO;
+        private EmployeeProjectDAO employeeProjectDAO;
+        private PayrollDAO payrollDAO;
+        private BonusDAO bonusDAO;
+        private TaxDAO taxDAO;
+
         public UnitOfWork()
         {
             if (this._dbContext == null)
@@ -66,6 +71,52 @@ namespace GroupProject_HRM_Library.Infrastructure
             }
         }
 
+        public EmployeeProjectDAO EmployeeProjectDAO
+        {
+            get
+            {
+                if (this.employeeProjectDAO == null)
+                {
+                    this.employeeProjectDAO = new EmployeeProjectDAO(this._dbContext);
+                }
+                return this.employeeProjectDAO;
+            }
+        }
+
+        public PayrollDAO PayrollDAO
+        {
+            get
+            {
+                if (this.payrollDAO == null)
+                {
+                    this.payrollDAO = new PayrollDAO(this._dbContext);
+                }
+                return this.payrollDAO;
+            }
+        }
+
+        public BonusDAO BonusDAO
+        {
+            get
+            {
+                if (this.bonusDAO == null)
+                {
+                    this.bonusDAO = new BonusDAO(this._dbContext);
+                }
+                return this.bonusDAO;
+            }
+        }
+        public TaxDAO TaxDAO
+        {
+            get
+            {
+                if (this.taxDAO == null)
+                {
+                    this.taxDAO = new TaxDAO(this._dbContext);
+                }
+                return this.taxDAO;
+            }
+        }
         public void Commit()
         {
             this._dbContext.SaveChanges();

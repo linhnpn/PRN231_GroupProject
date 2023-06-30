@@ -63,6 +63,29 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
+        public async Task<List<LeaveLog>> GetLeaveLogResponsesByEmplIDAndDateAsync
+                                            (int emplID, int? status, DateTime start, DateTime end)
+        {
+            try
+            {
+                if (status == null)
+                {
+                    return await this._dbContext.LeaveLogs
+                                            .Include(x => x.Employee)
+                                            .Where(x => x.EmployeeID == emplID && x.Date > start && x.Date < end)
+                                            .ToListAsync();
+                }
+                return await this._dbContext.LeaveLogs
+                                            .Include(x => x.Employee)
+                                            .Where(x => x.EmployeeID == emplID && x.Date > start && x.Date < end && x.LeaveLogStatus == status)
+                                            .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<List<LeaveLog>> GetLeaveLogResponsesByProjectIDAsync(int projectID, int? status)
         {
             try

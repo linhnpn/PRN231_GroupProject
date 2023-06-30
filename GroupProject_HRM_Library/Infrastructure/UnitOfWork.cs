@@ -62,11 +62,11 @@ namespace GroupProject_HRM_Library.Infrastructure
         {
             get
             {
-                if(_taxDAO == null)
+                if(taxDAO == null)
                 {
-                    _taxDAO = new TaxDAO(_dbContext);
+                    taxDAO = new TaxDAO(_dbContext);
                 }
-                return _taxDAO;
+                return taxDAO;
             }
         }
 
@@ -127,17 +127,6 @@ namespace GroupProject_HRM_Library.Infrastructure
                     this.bonusDAO = new BonusDAO(this._dbContext);
                 }
                 return this.bonusDAO;
-            }
-        }
-        public TaxDAO TaxDAO
-        {
-            get
-            {
-                if (this.taxDAO == null)
-                {
-                    this.taxDAO = new TaxDAO(this._dbContext);
-                }
-                return this.taxDAO;
             }
         }
         public void Commit()

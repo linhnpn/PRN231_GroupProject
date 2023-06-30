@@ -25,8 +25,7 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IOvertimeLogRepository, OvertimeLogRepository>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "serviceFirebase.json");

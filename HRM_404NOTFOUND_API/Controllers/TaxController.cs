@@ -5,10 +5,8 @@ using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GroupProject_HRM_Api.Controllers
 {
@@ -23,7 +21,6 @@ namespace GroupProject_HRM_Api.Controllers
             _taxRepository = taxRepository;
         }
 
-        // GET: api/<TaxController>
         [HttpGet, ActionName("GetTaxes")]
         public async Task<IActionResult> GetTaxesAsync()
         {

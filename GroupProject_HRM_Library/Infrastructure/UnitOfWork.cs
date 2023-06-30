@@ -1,4 +1,5 @@
 ﻿
+using GroupProject_HRM_Library.DAO;
 using GroupProject_HRM_Library.Models;
 
 namespace GroupProject_HRM_Library.Infrastructure
@@ -7,6 +8,8 @@ namespace GroupProject_HRM_Library.Infrastructure
     {
         private HumanResourceManagementContext _dbContext;
         //private ProductDAO productDAO;
+        private TaxDAO _taxDAO;
+        private ProjectDAO _projectDAO;
         public UnitOfWork()
         {
             if (this._dbContext == null)
@@ -26,6 +29,28 @@ namespace GroupProject_HRM_Library.Infrastructure
         //        return this.productDAO;
         //    }
         //}
+        public ProjectDAO ProjectDAO
+        {
+            get
+            {
+                if (_projectDAO == null)
+                {
+                    _projectDAO = new ProjectDAO(_dbContext);
+                }
+                return _projectDAO;
+            }
+        }
+        public TaxDAO TaxDAO
+        {
+            get
+            {
+                if(_taxDAO == null)
+                {
+                    _taxDAO = new TaxDAO(_dbContext);
+                }
+                return _taxDAO;
+            }
+        }
 
         public void Commit()
         {

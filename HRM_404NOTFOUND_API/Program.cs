@@ -1,6 +1,9 @@
 using GroupProject_HRM_Api.Middlewares;
 using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Profiles;
+using GroupProject_HRM_Library.Repository.Implement;
+using GroupProject_HRM_Library.Repository.Interface;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +11,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(opts
-                    => opts.SuppressModelStateInvalidFilter = true);
+                    => opts.SuppressModelStateInvalidFilter = true)
+                .AddJsonOptions(options
+                    => options.JsonSerializerOptions.Converters
+                    .Add(new JsonStringEnumConverter()))
+                ;
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile));
 
-builder.Services.AddTransient<ExceptionMiddleware>();
+//builder.Services.AddTransient<ExceptionMiddleware>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.ConfigureExceptionMiddleware();
+//app.ConfigureExceptionMiddleware();
 
 app.UseHttpsRedirection();
 

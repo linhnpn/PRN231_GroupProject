@@ -4,6 +4,7 @@ using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Profiles;
 using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,15 +12,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(opts
-                    => opts.SuppressModelStateInvalidFilter = true);
+                    => opts.SuppressModelStateInvalidFilter = true)
+                .AddJsonOptions(options
+                    => options.JsonSerializerOptions.Converters
+                    .Add(new JsonStringEnumConverter()))
+                ;
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ILeaveLogRepository, LeaveLogRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IOvertimeLogRepository, OvertimeLogRepository>();
+builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
 builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "serviceFirebase.json");
@@ -38,7 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.ConfigureExceptionMiddleware();
+//app.ConfigureExceptionMiddleware();
 
 app.UseHttpsRedirection();
 

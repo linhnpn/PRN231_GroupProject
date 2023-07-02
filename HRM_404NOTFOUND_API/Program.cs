@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers()
-                .ConfigureApiBehaviorOptions(opts
-                    => opts.SuppressModelStateInvalidFilter = true)
+                /*.ConfigureApiBehaviorOptions(opts
+                    => opts.SuppressModelStateInvalidFilter = true)*/
                 .AddJsonOptions(options
                     => options.JsonSerializerOptions.Converters
                     .Add(new JsonStringEnumConverter()))
@@ -20,8 +20,9 @@ builder.Services.AddControllers()
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
+builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile),typeof(ProjectProfile),typeof(EmployeeProjectProfile));
 
 //builder.Services.AddTransient<ExceptionMiddleware>();
 

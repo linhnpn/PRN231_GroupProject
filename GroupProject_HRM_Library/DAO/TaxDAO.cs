@@ -1,5 +1,6 @@
 ﻿using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace GroupProject_HRM_Library.DAO
 {
@@ -16,7 +17,7 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Taxes.AsNoTracking().ToListAsync();
+                return await _dbContext.Taxes.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -86,7 +87,7 @@ namespace GroupProject_HRM_Library.DAO
                 {
                     taxList = taxList.OrderBy(h => h.TaxID);
                 }
-                return await taxList.AsNoTracking().ToListAsync();
+                return await taxList.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -97,8 +98,8 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Taxes.AsNoTracking().
-                    SingleOrDefaultAsync(tax => tax.TaxID == taxId);
+                return await _dbContext.Taxes.
+                    FirstOrDefaultAsync(tax => tax.TaxID == taxId);
             }
             catch (Exception ex)
             {
@@ -123,7 +124,7 @@ namespace GroupProject_HRM_Library.DAO
             try
             {
                 Tax? tax = _dbContext.Taxes.
-                    SingleOrDefault(tax => tax.TaxID == taxID);
+                    FirstOrDefault(tax => tax.TaxID == taxID);
                 _dbContext.Taxes.Remove(tax);
             }
             catch (Exception ex)
@@ -136,6 +137,9 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
+                var existTax = _dbContext.Taxes.Local.FirstOrDefault(t => t.TaxID.Equals(tax.TaxID));
+                if (existTax != null)
+                    _dbContext.Entry(existTax).State = EntityState.Detached;
                 _dbContext.Entry<Tax>(tax).State = EntityState.Modified;
             }
             catch (Exception ex)

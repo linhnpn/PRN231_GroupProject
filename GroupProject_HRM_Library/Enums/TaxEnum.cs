@@ -9,12 +9,12 @@ namespace GroupProject_HRM_Library.Enums
 {
     public static class TaxEnum
     {
-        public enum Status
+        public enum TaxStatus
         {
             InUse = 1,
             NotInUse = 0
         }
-        public enum OrderBy
+        public enum TaxOrderBy
         {
             MinSalary_Asc,
             MinSalary_Desc,

@@ -1,7 +1,9 @@
-﻿using GroupProject_HRM_Library.DTOs.Income;
+﻿using GroupProject_HRM_Library.DTOs.Bonus;
+using GroupProject_HRM_Library.DTOs.OvertimeLog;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,28 +11,17 @@ namespace GroupProject_HRM_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IncomeController : ControllerBase
+    public class BonusController : ControllerBase
     {
-        private IIncomeRepository _incomeRepository;
+        private IBonusRepository _bonusRepository;
 
-        public IncomeController(IIncomeRepository incomeRepository)
+        public BonusController(IBonusRepository bonusRepository)
         {
-            this._incomeRepository = incomeRepository;
+            this._bonusRepository = bonusRepository;
         }
 
-        [HttpGet("{id}"), ActionName("Get Income")]
-        public async Task<IActionResult> GetByEmplIDAsync([FromRoute] int id)
-        {
-            List<GetIncomeEmployeeResponse> getIncomeEmployeeResponses = await this._incomeRepository.GetIncomeEmplAsync(id);
-            return Ok(new
-            {
-                Success = true,
-                Data = getIncomeEmployeeResponses
-            });
-        }
-
-        [HttpPost, ActionName("Post Income")]
-        public async Task<IActionResult> PostIncomeAsync([FromBody] List<CreateIncomeEmployeeResponse> request)
+        [HttpPost, ActionName("Post Bonus")]
+        public async Task<IActionResult> PostBonusAsync([FromForm] BonusRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -53,11 +44,11 @@ namespace GroupProject_HRM_Api.Controllers
 
             }
 
-            await this._incomeRepository.CreateIncomeAsync(request);
+            await this._bonusRepository.CreateBonusAsync(request);
             return Ok(new
             {
                 Success = true,
-                Data = "Created income successfully."
+                Data = "Created bonus successfully."
             });
         }
     }

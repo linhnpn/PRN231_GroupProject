@@ -18,8 +18,9 @@ builder.Services.AddScoped<ILeaveLogRepository, LeaveLogRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IOvertimeLogRepository, OvertimeLogRepository>();
+builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile), typeof(BonusProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "serviceFirebase.json");

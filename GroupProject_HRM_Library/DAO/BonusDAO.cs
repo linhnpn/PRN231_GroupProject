@@ -1,26 +1,23 @@
 ﻿using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.DAO
 {
-    public class IncomeDAO
+    public class BonusDAO
     {
         private HumanResourceManagementContext _dbContext;
-        public IncomeDAO(HumanResourceManagementContext dbContext)
+        public BonusDAO(HumanResourceManagementContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<List<Income>> GetIncomeByEmplIDAsync(int id)
+
+
+        public async Task<List<Bonus>> GetListBounusByEmpID(int id)
         {
             try
             {
-                return await _dbContext.Incomes.Where(x => x.EmployeeID == id).ToListAsync();
+                return await this._dbContext.Bonuses.Where(x => x.EmployeeID == id).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -28,11 +25,12 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
-        public async Task<Income> GetLastIncomeByEmplIDAsync(int id)
+        public async Task<List<Bonus>> GetListBounusByEmpIDAndDate(int id, DateTime start)
         {
             try
             {
-                return await _dbContext.Incomes.OrderBy(x => x.EndDate).LastOrDefaultAsync(x => x.EmployeeID == id);
+                return await this._dbContext.Bonuses.Where(x => x.EmployeeID == id && x.Timestamp > start)
+                                        .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -40,11 +38,11 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
-        public async Task CreateIncomeAsync(Income income)
+        public async Task CreateBonusAsync(Bonus bonus)
         {
             try
             {
-                await this._dbContext.Incomes.AddAsync(income);
+                await this._dbContext.Bonuses.AddAsync(bonus);
             }
             catch (Exception ex)
             {

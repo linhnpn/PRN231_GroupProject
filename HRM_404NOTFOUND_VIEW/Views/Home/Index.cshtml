@@ -1,5 +1,7 @@
-﻿@{
+﻿@model GroupProject_HRM_Library.DTOs.Authenticate.AuthenRequest
+@{
     ViewData["Title"] = "Home Page";
+    Layout = null;
 }
     <div id="example">
         <div id="grid"></div>
@@ -88,4 +90,45 @@
         }
     </style>
 
+    <!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body style= "padding: 10px;">
+        <h3 class="text-center">Login Page</h3>   
+    
+<div class="row">
+    <div class="col-md-3" style="margin: auto">
+    <form method="post" asp-controller="Home" asp-action="Login">   
+        @{
+        if(ViewBag.error != null)
+        {
+            <span  class="text-danger">@ViewBag.error</span>
+        }
+    }
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group text-center">
+                <input type="submit" value="Login" class="btn btn-primary" />
+                <a class="btn btn-primary" asp-controller="Home" asp-action="Register">Register</a>             
+            </div>
+    </form>
+    </div>
+</div>
+
+</body>
+</html>
 

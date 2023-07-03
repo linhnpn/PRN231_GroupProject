@@ -43,5 +43,19 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<Employee> Authenticate(string username, string password)
+        {
+            try
+            {
+                return _dbContext.Employees.Where(em => em.UserName.Equals(username) && em.Password.Equals(password))
+                    .Include(x => x.Role)
+                    .FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

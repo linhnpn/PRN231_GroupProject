@@ -12,6 +12,6 @@ namespace GroupProject_HRM_Library.Models
         public decimal PreviousRentIncome { get; set; }
         public decimal AfterRentIncome { get; set; }
         public int EmployeeID { get; set; }
-        public Employee Employee { get; set; }        
+        public Employee? Employee { get; set; }        
     }
 }

@@ -42,6 +42,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 }
 
                 leaveLog.LeaveLogStatus = (int)LeaveLogEnum.Status.WAITING;
+                leaveLog.RejectReson = "";
                 await _unitOfWork.LeaveLogDAO.CreateLeaveLogAsync(leaveLog);
                 await _unitOfWork.CommitAsync();
 

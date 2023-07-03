@@ -10,9 +10,9 @@ namespace GroupProject_HRM_Library.Models
         public DateTime OverTimeDate { get; set; }
         public int Hours { get; set; }
         public int OvertimeLogStatus { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public int EmployeeID { get; set; }
-        public Employee Employee { get; set; }
+        public Employee? Employee { get; set; }
 
     }
 }

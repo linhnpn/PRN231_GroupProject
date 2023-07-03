@@ -8,11 +8,11 @@ namespace GroupProject_HRM_Library.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int LeaveLogID { get; set; }
         public DateTime Date { get; set; }
-        public string Reason { get; set; }
-        public string LinkProof { get; set; }
+        public string? Reason { get; set; }
+        public string? LinkProof { get; set; }
         public int LeaveLogStatus { get; set; }
-        public string RejectReson { get; set; }
+        public string? RejectReson { get; set; }
         public int EmployeeID { get; set; }
-        public Employee Employee { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

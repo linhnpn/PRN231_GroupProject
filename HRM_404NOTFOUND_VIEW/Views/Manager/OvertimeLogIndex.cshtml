@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "OverTime Log Page";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+
+
+<div>
+    <div>
+        <h3>Overtime Request</h3>
+        <hr />
+    </div>
+    <div id="example">
+        <div id="overtimeGrid"></div>
+        <div id="detailsOvertimeLog"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="templateDetails">
+    <div id="detailsOvertimeLog-container">
+        <h2>#= leaveLogID # #= leaveLogID #</h2>
+        <em>#= leaveLogID #</em>
+        <dl>
+            <dt>City: #= leaveLogID #</dt>
+            <dt>Birth Date: #= 111 #</dt>
+        </dl>
+        <button class="btn btn-warning float-right" id="cancelButton">Cancel</button>
+    </div>
+</script>
+<script>
+    var wnd,
+        detailsTemplate;
+    $(document).ready(function () {
+        var grid = $("#overtimeGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        $.ajax({
+                            url: "https://localhost:5000/api/OvertimeLog/project?projectId=1",
+                            type: "GET",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    }
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "overtimeID",
+                        fields: {
+                            overtimeID: { type: "number" },
+                            overTimeDate: { type: "date" },
+                            hours: { type: "number" },
+                            description: { type: "string" },
+                            leaveLogStatus: { type: "number" },
+                            employeeName: { type: "string" }
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "overtimeID",
+                title: "ID",
+                filterable: { multi: true }
+            }, {
+                field: "overTimeDate",
+                title: "Start Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+
+            }, {
+                field: "hours",
+                title: "End Date",
+                filterable: {
+                    multi: true
+                }
+            }, {
+                field: "description",
+                title: "Description",
+                filterable: { multi: true },
+            }, {
+                field: "leaveLogStatus",
+                title: "Status",
+                filterable: { multi: true },
+                template: function (dataItem) {
+                    if (dataItem.leaveLogStatus == 0) return "Cancel";
+                    if (dataItem.leaveLogStatus == 1) return "Approve";
+                    if (dataItem.leaveLogStatus == -1) return "Reject";
+                    return "-";
+                }
+            },
+            {
+                field: "employee.employeeName",
+                title: "Name",
+                filterable: { multi: true },
+            },
+            { command: { text: "Cancel Log", click: cancelLeaveLog }, title: " ", width: "150" },
+            { command: { text: "View Detail", click: showDetails }, title: " ", width: "150" }
+            ]
+        }).data("kendoGrid");
+        wnd = $("#detailsOvertimeLog")
+            .kendoWindow({
+                title: "Leave Log Details",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 300
+            }).data("kendoWindow");
+
+        detailsTemplate = kendo.template($("#templateDetails").html());
+    });
+    function cancelLeaveLog(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+    }
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        wnd.content(detailsTemplate(dataItem));
+
+        $("#cancelButton").on("click", function () {
+            wnd.close();
+        });
+
+        wnd.center().open();
+    }
+</script>

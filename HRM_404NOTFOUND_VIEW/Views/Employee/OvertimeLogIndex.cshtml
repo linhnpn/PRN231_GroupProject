@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+
+
+<div>
+    <div>
+        <h3> Overtime Log</h3>
+        <hr />
+    </div>
+    <div id="example">
+        <div id="overtimeGrid"></div>
+        <div id="detailsOvertimeLog"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="templateDetails">
+    <div id="detailsOvertimeLog-container">
+        <h5>Fullname: #= employee.employeeName #</h5>
+        <em>Log Date: #= kendo.toString(overTimeDate, "D") #</em>
+            <p>Hours: #= hours #</p>
+            <p>Description: #= description #</p>
+            # if (overtimeLogStatus === 1) { #
+            <p>Status: Accept</p>
+        # } else if (overtimeLogStatus === -1) { #
+            <p>Status: Reject</p>
+            # } else { #
+                <p>Status: Waiting</p>
+            # } #
+        <button class="btn btn-warning float-right" id="closeButton">Close</button>
+    </div>
+</script>
+
+<script>
+    var wnd,
+        detailsTemplate;
+    $(document).ready(function () {
+        var grid = $("#overtimeGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        sessionStorage.setItem('id', '1');
+                        $.ajax({
+                            url: "https://localhost:5000/api/OvertimeLog/employee?id=" + sessionStorage.getItem('id'),
+                            type: "GET",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    }
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "overtimeID",
+                        fields: {
+                            overtimeID: { type: "number" },
+                            overTimeDate: { type: "date" },
+                            hours: { type: "number" },
+                            description: { type: "string" },
+                            overtimeLogStatus: { type: "number" }
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "overtimeID",
+                title: "ID",
+                filterable: { multi: true }
+            }, {
+                field: "overTimeDate",
+                title: "Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+
+            }, {
+                field: "hours",
+                title: "Hour OT",
+                filterable: {
+                    multi: true
+                }
+            }, {
+                field: "description",
+                title: "Description",
+                filterable: { multi: true },
+            }, {
+                field: "overtimeLogStatus",
+                title: "Status",
+                filterable: { multi: true },
+                template: function (dataItem) {
+                    if (dataItem.overtimeLogStatus == 0) return "Waiting";
+                    if (dataItem.overtimeLogStatus == 2) return "Cancel";
+                    if (dataItem.overtimeLogStatus == 1) return "Approve";
+                    if (dataItem.overtimeLogStatus == -1) return "Reject";
+                    return "-";
+                }
+            },
+            { command: { text: "Detail", click: showDetails }, title: " ", width: "80" }
+            ]
+        }).data("kendoGrid");
+        wnd = $("#detailsOvertimeLog")
+            .kendoWindow({
+                title: "Overtime Log Details",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 300
+            }).data("kendoWindow");
+
+        detailsTemplate = kendo.template($("#templateDetails").html());
+    });
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        wnd.content(detailsTemplate(dataItem));
+
+        $("#closeButton").on("click", function () {
+            wnd.close();
+        });
+
+        wnd.center().open();
+    }
+</script>

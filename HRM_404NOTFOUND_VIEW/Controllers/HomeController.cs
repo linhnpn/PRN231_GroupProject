@@ -30,6 +30,10 @@ namespace HRM_404NOTFOUND_VIEW.Controllers
         {
             return View();
         }
+        public IActionResult Test()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Login(AuthenRequest authenRequest)

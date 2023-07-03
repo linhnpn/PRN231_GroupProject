@@ -35,7 +35,7 @@ namespace GroupProject_HRM_Library.DAO
                 return await _dbContext.Employees
                     .Include(x => x.EmployeeProjects)
                     .ThenInclude(ep => ep.Project)
-                    .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.Status.CURRENT))
+                    .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress))
                     .FirstOrDefaultAsync(x => x.EmployeeID == id);
             }
             catch (Exception ex)

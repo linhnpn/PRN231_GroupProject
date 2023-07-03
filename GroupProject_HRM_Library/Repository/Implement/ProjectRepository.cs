@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GroupProject_HRM_Library.DTOs.Tax;
+using GroupProject_HRM_Library.DTOs.Project;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
@@ -15,26 +15,26 @@ using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.Repository.Implement
 {
-    public class TaxRepository : ITaxRepository
+    public class ProjectRepository : IProjectRepository
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public TaxRepository(IUnitOfWork unitOfWork, IMapper mapper)
+        public ProjectRepository(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = (UnitOfWork)unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task CreateTaxRequestAsync(CreateTaxRequest request)
+        public async Task CreateProjectRequestAsync(CreateProjectRequest request)
         {
             try
             {
-                var tax = _mapper.Map<Tax>(request);
-                tax.Timestamp = DateTime.Now;
-                tax.TaxStatus = (int)TaxEnum.TaxStatus.InUse;
+                var pro = _mapper.Map<Project>(request);
+                pro.ProjectBonus = 0;
+                pro.ProjectStatus = (int)ProjectEnum.ProjectStatus.NotStarted;
 
-                await _unitOfWork.TaxDAO.AddNewTaxAsync(tax);
+                await _unitOfWork.ProjectDAO.AddNewProjectAsync(pro);
                 await _unitOfWork.CommitAsync();
 
             }
@@ -53,16 +53,16 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
-        public async Task DeleteTaxRequestAsync(int id)
+        public async Task DeleteProjectRequestAsync(int id)
         {
             try
             {
-                var taxRequest = await _unitOfWork.TaxDAO.GetTaxByIDAsync(id);
+                var proRequest = await _unitOfWork.ProjectDAO.GetProjectByIDAsync(id);
 
-                if (taxRequest == null)
-                    throw new NotFoundException("The Tax with inputted ID does not exist in the System.");
+                if (proRequest == null)
+                    throw new NotFoundException("The Project with inputted ID does not exist in the System.");
 
-                _unitOfWork.TaxDAO.DeleteTax(id);
+                _unitOfWork.ProjectDAO.DeleteProject(id);
                 await _unitOfWork.CommitAsync();
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The Tax with inputted ID does not exist in the System."))
+                if (ex.Message.Contains("The Project with inputted ID does not exist in the System."))
                 {
                     throw new NotFoundException(JsonConvert.SerializeObject(errors));
                 }
@@ -84,16 +84,15 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
-        public async Task<GetTaxResponse> GetTaxResponseAsync(int id)
+        public async Task<GetProjectDetailResponse> GetProjectResponseAsync(int id)
         {
             try
             {
-                var taxRequest = await _unitOfWork.TaxDAO.GetTaxByIDAsync(id);
+                var proRequest = await _unitOfWork.ProjectDAO.GetProjectByIDAsync(id);
 
-                if (taxRequest == null)
-                    throw new NotFoundException("The Tax with inputted ID does not exist in the System.");
-
-                return _mapper.Map<GetTaxResponse>(taxRequest);
+                if (proRequest == null)
+                    throw new NotFoundException("The Project with inputted ID does not exist in the System.");
+                return _mapper.Map<GetProjectDetailResponse>(proRequest);
 
             }
             catch (Exception ex)
@@ -107,7 +106,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The Tax with inputted ID does not exist in the System."))
+                if (ex.Message.Contains("The Project with inputted ID does not exist in the System."))
                 {
                     throw new NotFoundException(JsonConvert.SerializeObject(errors));
                 }
@@ -115,12 +114,17 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
-        public async Task<List<GetTaxResponse>> GetTaxResponsesAsync()
+        public async Task<List<GetProjectResponse>> GetProjectResponsesAsync()
         {
             try
             {
-                List<Tax> taxes = await _unitOfWork.TaxDAO.GetTaxesAsync();
-                return _mapper.Map<List<GetTaxResponse>>(taxes);
+                List<Project> projects = await _unitOfWork.ProjectDAO.GetProjectsAsync();
+                var projectvms = _mapper.Map<List<GetProjectResponse>>(projects);
+                foreach (var projectvm in projectvms)
+                {
+                    projectvm.ProjectParticipations = await _unitOfWork.ProjectDAO.GetProjectParticipationsCountAsync(projectvm.ProjectID);
+                }
+                return projectvms;
             }
             catch (Exception ex)
             {
@@ -128,48 +132,35 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
-        public async Task<List<GetTaxResponse>> GetTaxResponsesSortedAsync(
-            decimal? minSalary, 
-            decimal? maxSalary, 
-            double? minPercent = null, 
-            double? maxPercent = null, 
-            DateTime? addDate = null,
-            TaxEnum.TaxStatus? status = null,
-            TaxEnum.TaxOrderBy? orderBy = null)
+        public async Task<List<GetProjectResponse>> GetProjectResponsesSortedAsync(
+            string? projectName, 
+            decimal? bonus = null, 
+            ProjectEnum.ProjectStatus? status = null, 
+            ProjectEnum.ProjectOrderBy? orderBy = null)
         {
             try
             {
                 int? statusInt = null;
-                if (minSalary > maxSalary)
-                {
-                    var t = maxSalary.Value;
-                    maxSalary = minSalary;
-                    minSalary = t;
-                }
-                if(minPercent > maxPercent)
-                {
-                    var t = maxPercent.Value;
-                    maxPercent = minPercent;
-                    minPercent = t;
-                }
-                if(status != null)
+                if (status != null)
                 {
                     statusInt = (int)status;
                 }
                 string? orderByString = null;
-                if(orderBy != null)
+                if (orderBy != null)
                 {
-                    orderByString = Enum.GetName((TaxEnum.TaxOrderBy)orderBy);
+                    orderByString = Enum.GetName((ProjectEnum.ProjectOrderBy)orderBy);
                 }
-                List<Tax> taxes = await _unitOfWork.TaxDAO.GetTaxesSortedAsync(
-                    minSalary,
-                    maxSalary,
-                    minPercent,
-                    maxPercent,
-                    addDate,
+                List<Project> projects = await _unitOfWork.ProjectDAO.GetProjectsSortedAsync(
+                    projectName,
                     statusInt,
+                    bonus,
                     orderByString);
-                return _mapper.Map<List<GetTaxResponse>>(taxes);
+                var projectvms = _mapper.Map<List<GetProjectResponse>>(projects);
+                foreach (var projectvm in projectvms)
+                {
+                    projectvm.ProjectParticipations = await _unitOfWork.ProjectDAO.GetProjectParticipationsCountAsync(projectvm.ProjectID);
+                }
+                return projectvms;
             }
             catch (Exception ex)
             {
@@ -177,19 +168,19 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
-        public async Task UpdateTaxRequestAsync(int id, UpdateTaxRequest request)
+        public async Task UpdateProjectRequestAsync(int id, UpdateProjectRequest request)
         {
             try
             {
-                var taxRequest = await _unitOfWork.TaxDAO.GetTaxByIDAsync(id);
-                if (taxRequest == null)
-                    throw new NotFoundException("The Tax does not exist in the System.");
+                var projectRequest = await _unitOfWork.ProjectDAO.GetProjectByIDAsync(id);
+                if (projectRequest == null)
+                    throw new NotFoundException("The Project does not exist in the System.");
 
-                taxRequest.SalaryMin = request.SalaryMin;
-                taxRequest.SalaryMax = request.SalaryMax;
-                taxRequest.Percent = request.Percent;
+                projectRequest.ProjectName = request.ProjectName;
+                projectRequest.ProjectDescription = request.ProjectDescription;
+                projectRequest.ProjectBonus = request.ProjectBonus;
 
-                _unitOfWork.TaxDAO.UpdateTax(taxRequest);
+                _unitOfWork.ProjectDAO.UpdateProject(projectRequest);
                 await _unitOfWork.CommitAsync();
 
             }
@@ -204,25 +195,26 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The Tax does not exist in the System."))
+                if (ex.Message.Contains("The Project does not exist in the System."))
                 {
                     throw new NotFoundException(JsonConvert.SerializeObject(errors));
                 }
                 throw new Exception(ex.Message);
             }
         }
-        public async Task UpdateTaxStatusRequestAsync(int id, TaxEnum.TaxStatus status)
+        public async Task UpdateProjectStatusRequestAsync(int id, ProjectEnum.ProjectStatus status)
         {
             try
             {
-                var taxRequest = await _unitOfWork.TaxDAO.GetTaxByIDAsync(id);
-                if (taxRequest == null)
-                    throw new NotFoundException("The Tax does not exist in the System.");
+                var projectRequest = await _unitOfWork.ProjectDAO.GetProjectByIDAsync(id);
+                if (projectRequest == null)
+                    throw new NotFoundException("The Project does not exist in the System.");
 
-                taxRequest.TaxStatus = (int)status;
+                projectRequest.ProjectStatus = (int)status;
 
-                _unitOfWork.TaxDAO.UpdateTax(taxRequest);
+                _unitOfWork.ProjectDAO.UpdateProject(projectRequest);
                 await _unitOfWork.CommitAsync();
+
             }
             catch (Exception ex)
             {
@@ -235,7 +227,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The Tax does not exist in the System."))
+                if (ex.Message.Contains("The Project does not exist in the System."))
                 {
                     throw new NotFoundException(JsonConvert.SerializeObject(errors));
                 }

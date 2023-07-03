@@ -1,113 +1,77 @@
+﻿using GroupProject_HRM_Library.DTOs.Project;
 using GroupProject_HRM_Library.DTOs.Tax;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
+using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GroupProject_HRM_Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TaxController : ControllerBase
+    public class ProjectController : ControllerBase
     {
-        private readonly ITaxRepository _taxRepository;
+        private readonly IProjectRepository _projectRepository;
 
-        public TaxController(ITaxRepository taxRepository)
+        public ProjectController(IProjectRepository projectRepository)
         {
-            _taxRepository = taxRepository;
+            _projectRepository = projectRepository;
         }
 
-        [HttpGet, ActionName("GetTaxes")]
-        public async Task<IActionResult> GetTaxesAsync()
+        // GET: api/<ProjectController>
+        [HttpGet, ActionName("GetProjects")]
+        public async Task<IActionResult> GetProjectsAsync()
         {
-            List<GetTaxResponse> taxResponses = await _taxRepository.GetTaxResponsesAsync();
+            List<GetProjectResponse> proResponses = await _projectRepository.GetProjectResponsesAsync();
             return Ok(new
             {
                 Success = true,
-                Data = taxResponses
+                Data = proResponses
             });
         }
-
-        // GET: api/<TaxController>/Sort
-        [HttpGet("Sort"), ActionName("GetTaxesSorted")]
+        // GET: api/<ProjectController>/Sort
+        [HttpGet("Sort"), ActionName("GetProjectsSorted")]
         public async Task<IActionResult> GetTaxesSortedAsync(
-            [Required][FromQuery] decimal? minSalary,
-            [Required][FromQuery] decimal? maxSalary,
-            [FromQuery] double? minPercent = null,
-            [FromQuery] double? maxPercent = null,
-            [FromQuery] DateTime? addDate = null,
-            [FromQuery] TaxEnum.TaxStatus? status = null,
-            [FromQuery] TaxEnum.TaxOrderBy? orderBy = null)
+            [Required][FromQuery] string? projectName,
+            [FromQuery] decimal? bonus = null,
+            [FromQuery] ProjectEnum.ProjectStatus? status = null,
+            [FromQuery] ProjectEnum.ProjectOrderBy? orderBy = null)
         {
-            List<GetTaxResponse> taxResponses = 
-                await _taxRepository.GetTaxResponsesSortedAsync(
-                    minSalary,
-                    maxSalary,
-                    minPercent,
-                    maxPercent,
-                    addDate,
+            List<GetProjectResponse> proResponses =
+                await _projectRepository.GetProjectResponsesSortedAsync(
+                    projectName,
+                    bonus,
                     status,
                     orderBy);
             return Ok(new
             {
                 Success = true,
-                Data = taxResponses
+                Data = proResponses
             });
         }
 
-        // GET api/<TaxController>/5
-        [HttpGet("{id}"), ActionName("GetTax")]
-        public async Task<IActionResult> GetTaxAsync([FromRoute]int id)
+        // GET api/<ProjectController>/5
+        [HttpGet("{id}"), ActionName("GetProject")]
+        public async Task<IActionResult> GetProjectAsync([FromRoute] int id)
         {
-            GetTaxResponse taxResponse = await _taxRepository.GetTaxResponseAsync(id);
+            GetProjectDetailResponse proResponse = await _projectRepository.GetProjectResponseAsync(id);
 
             return Ok(new
             {
                 Success = true,
-                Data = taxResponse
+                Data = proResponse
             });
         }
 
-        // POST api/<TaxController>
-        [HttpPost, ActionName("PostTax")]
-        public async Task<IActionResult> PostTaxAsync([FromForm] CreateTaxRequest value)
-        {
-            if(!ModelState.IsValid)
-            {
-                var errors = new List<ErrorDetail>();
-                foreach (var pair in ModelState)
-                {
-                    if (pair.Value.Errors.Count > 0)
-                    {
-                        ErrorDetail errorDetail = new ErrorDetail()
-                        {
-                            FieldNameError = pair.Key,
-                            DescriptionError = pair.Value.Errors.Select(error => error.ErrorMessage).ToList()
-                        };
-                        errors.Add(errorDetail);
-                    }
-                }
-
-                var message = JsonConvert.SerializeObject(errors);
-                throw new BadRequestException(message);
-            }
-            await _taxRepository.CreateTaxRequestAsync(value);
-            return Ok(new
-            {
-                Success = true,
-                Data = "Created Tax Successfully!"
-            });
-        }
-
-        // PUT api/<TaxController>/5
-        [HttpPut("{id}"), ActionName("PutTax")]
-        public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromForm] UpdateTaxRequest value)
+        // POST api/<ProjectController>
+        [HttpPost, ActionName("PostProject")]
+        public async Task<IActionResult> PostProjectAsync([FromForm] CreateProjectRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -128,19 +92,17 @@ namespace GroupProject_HRM_Api.Controllers
                 var message = JsonConvert.SerializeObject(errors);
                 throw new BadRequestException(message);
             }
-            await _taxRepository.UpdateTaxRequestAsync(id,value);
+            await _projectRepository.CreateProjectRequestAsync(value);
             return Ok(new
             {
                 Success = true,
-                Data = "Updated Tax Successfully!"
+                Data = "Created Project Successfully!"
             });
         }
 
-        // PUT api/<TaxController>/5
-        [HttpPut("{id}/Status"), ActionName("PutTaxStatus")]
-        public async Task<IActionResult> PutTaxStatusAsync(
-            [FromRoute] int id, 
-            [Required(ErrorMessage = "Tax Status is required")][FromForm] TaxEnum.TaxStatus value)
+        // PUT api/<ProjectController>/5
+        [HttpPut("{id}"), ActionName("PutProject")]
+        public async Task<IActionResult> PutProjectAsync([FromRoute] int id, [FromForm] UpdateProjectRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -161,23 +123,56 @@ namespace GroupProject_HRM_Api.Controllers
                 var message = JsonConvert.SerializeObject(errors);
                 throw new BadRequestException(message);
             }
-            await _taxRepository.UpdateTaxStatusRequestAsync(id, value);
+            await _projectRepository.UpdateProjectRequestAsync(id, value);
             return Ok(new
             {
                 Success = true,
-                Data = "Updated Tax Successfully!"
+                Data = "Updated Project Successfully!"
             });
         }
 
-        // DELETE api/<TaxController>/5
+        // PUT api/<ProjectController>/5
+        [HttpPut("{id}/Status"), ActionName("PutProjectStatus")]
+        public async Task<IActionResult> PutProjectStatusAsync(
+            [FromRoute] int id,
+            [Required(ErrorMessage = "Project Status is required")][FromForm] ProjectEnum.ProjectStatus value)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = new List<ErrorDetail>();
+                foreach (var pair in ModelState)
+                {
+                    if (pair.Value.Errors.Count > 0)
+                    {
+                        ErrorDetail errorDetail = new ErrorDetail()
+                        {
+                            FieldNameError = pair.Key,
+                            DescriptionError = pair.Value.Errors.Select(error => error.ErrorMessage).ToList()
+                        };
+                        errors.Add(errorDetail);
+                    }
+                }
+
+                var message = JsonConvert.SerializeObject(errors);
+                throw new BadRequestException(message);
+            }
+            await _projectRepository.UpdateProjectStatusRequestAsync(id, value);
+            return Ok(new
+            {
+                Success = true,
+                Data = "Updated Project Successfully!"
+            });
+        }
+
+        // DELETE api/<ProjectController>/5
         [HttpDelete("{id}"), ActionName("DeleteTax")]
-        public async Task<IActionResult> DeleteTaxAsync([FromRoute]int id)
+        public async Task<IActionResult> DeleteProjectAsync([FromRoute] int id)
         {
-            await _taxRepository.DeleteTaxRequestAsync(id);
+            await _projectRepository.DeleteProjectRequestAsync(id);
             return Ok(new
             {
                 Success = true,
-                Data = "Deleted Tax Successfully!"
+                Data = "Deleted Project Successfully!"
             });
         }
     }

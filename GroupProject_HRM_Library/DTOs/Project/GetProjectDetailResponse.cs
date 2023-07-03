@@ -1,6 +1,5 @@
-using GroupProject_HRM_Library.DTOs.EmployeeProject;
+﻿using GroupProject_HRM_Library.DTOs.EmployeeProject;
 using GroupProject_HRM_Library.Enums;
-using GroupProject_HRM_Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.DTOs.Project
 {
-    public class GetProjectResponse
+    public class GetProjectDetailResponse
     {
         public int ProjectID { get; set; }
         public string? ProjectName { get; set; }
@@ -17,5 +16,6 @@ namespace GroupProject_HRM_Library.DTOs.Project
         public ProjectEnum.ProjectStatus ProjectStatus { get; set; }
         public int ProjectParticipations { get; set; }
         public decimal ProjectBonus { get; set; }
+        public ICollection<GetEmployeeProjectResponse>? EmployeeProjects { get; set; }
     }
 }

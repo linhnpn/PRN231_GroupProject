@@ -16,13 +16,29 @@ namespace GroupProject_HRM_Library.DAO
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Project>> GetAll()
+        public async Task<List<Project>> GetProjectsAsync()
         {
             try
             {
                 return await _dbContext.Projects
-                    .Include(pro => pro.EmployeeProjects)
+                    .AsNoTracking()
                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<int> GetProjectParticipationsCountAsync(int proId)
+        {
+            try
+            {
+                var pro = _dbContext.Projects.Where(pro => pro.ProjectID.Equals(proId));
+                if (pro == null)
+                {
+                    throw new Exception($"The Project with inputted ID does not exist in the System.");
+                }
+                return await pro.SelectMany(pro => pro.EmployeeProjects).CountAsync();
             }
             catch (Exception ex)
             {
@@ -79,7 +95,7 @@ namespace GroupProject_HRM_Library.DAO
                 {
                     proList = proList.OrderBy(h => h.ProjectID);
                 }
-                return await proList.Include(empro => empro.EmployeeProjects).ToListAsync();
+                return await proList.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
             {
@@ -90,8 +106,12 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Projects.
-                    SingleOrDefaultAsync(pro => pro.ProjectID == proId);
+                return await _dbContext.Projects
+                    .Include(proj => proj.EmployeeProjects)
+                    .ThenInclude(empproj => empproj.Employee)
+                    .ThenInclude(emp => emp.Role)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(pro => pro.ProjectID == proId);
             }
             catch (Exception ex)
             {
@@ -129,6 +149,9 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
+                var existProject = _dbContext.Projects.Local.FirstOrDefault(p => p.ProjectID.Equals(pro.ProjectID));
+                if (existProject != null)
+                    _dbContext.Entry(existProject).State = EntityState.Detached;
                 _dbContext.Entry<Project>(pro).State = EntityState.Modified;
             }
             catch (Exception ex)

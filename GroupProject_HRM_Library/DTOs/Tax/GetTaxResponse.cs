@@ -14,6 +14,6 @@ namespace GroupProject_HRM_Library.DTOs.Tax
         public decimal SalaryMax { get; set; }
         public double Percent { get; set; }
         public DateTime Timestamp { get; set; }
-        public TaxEnum.Status TaxStatus { get; set; }
+        public TaxEnum.TaxStatus TaxStatus { get; set; }
     }
 }

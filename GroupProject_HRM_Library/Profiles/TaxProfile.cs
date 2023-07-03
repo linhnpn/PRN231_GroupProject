@@ -14,8 +14,8 @@ namespace GroupProject_HRM_Library.Profiles
         public TaxProfile()
         {
             CreateMap<Tax, GetTaxResponse>().ReverseMap();
-            CreateMap<Tax, CreateTaxRequest>().ReverseMap();
-            CreateMap<Tax,UpdateTaxRequest>().ReverseMap();
+            CreateMap<CreateTaxRequest, Tax>().ReverseMap();
+            CreateMap<UpdateTaxRequest, Tax>().ReverseMap();
         }
     }
 }

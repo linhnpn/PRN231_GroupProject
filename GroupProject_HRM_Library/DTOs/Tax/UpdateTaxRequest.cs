@@ -24,8 +24,8 @@ namespace GroupProject_HRM_Library.DTOs.Tax
         [Required(ErrorMessage = "Percent is required")]
         [Range(0, 100, ErrorMessage = "Percentage range from {2} to {1} percent.")]
         public double Percent { get; set; }
-        [Required(ErrorMessage = "Tax Status is required")]
-        [Range(0, 1, ErrorMessage = "Tax Status range consist of (In use) {1} to (Not in use) {2}")]
-        public TaxEnum.Status TaxStatus { get; set; }
+        /*[Required(ErrorMessage = "Tax Status is required")]
+        [DisplayName("Tax Status")]
+        public TaxEnum.TaxStatus TaxStatus { get; set; }*/
     }
 }

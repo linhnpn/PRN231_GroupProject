@@ -12,6 +12,7 @@ namespace GroupProject_HRM_Library.Repository.Interface
     {
         public Task CreateTaxRequestAsync(CreateTaxRequest request);
         public Task UpdateTaxRequestAsync(int id,UpdateTaxRequest request);
+        public Task UpdateTaxStatusRequestAsync(int id, TaxEnum.TaxStatus status);
         public Task<GetTaxResponse> GetTaxResponseAsync(int id);
         public Task<List<GetTaxResponse>> GetTaxResponsesAsync();
         public Task<List<GetTaxResponse>> GetTaxResponsesSortedAsync(
@@ -20,8 +21,8 @@ namespace GroupProject_HRM_Library.Repository.Interface
             double? minPercent = null,
             double? maxPercent = null,
             DateTime? addDate = null,
-            TaxEnum.Status? status = null,
-            TaxEnum.OrderBy? orderBy = null);
+            TaxEnum.TaxStatus? status = null,
+            TaxEnum.TaxOrderBy? orderBy = null);
         public Task DeleteTaxRequestAsync(int id);
     }
 }

@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GroupProject_HRM_Library\GroupProject_HRM_Library.csproj" />
+    <ProjectReference Include="..\HRM_404NOTFOUND_API\GroupProject_HRM_Api.csproj" />
+  </ItemGroup>
+
 </Project>

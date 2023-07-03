@@ -38,6 +38,12 @@ namespace GroupProject_HRM_Api.Middlewares
                 case BadRequestException _:
                     context.Response.StatusCode = (int)StatusCodes.Status400BadRequest;
                     break;
+                case ForBiddenException _:
+                    context.Response.StatusCode = (int)StatusCodes.Status403Forbidden;
+                    break;
+                case UnauthorizedException _:
+                    context.Response.StatusCode = (int)StatusCodes.Status401Unauthorized;
+                    break;
                 default:
                     _ = context.Response.WriteAsync(JsonConvert.SerializeObject(ex.ToString()));
                     check = false;

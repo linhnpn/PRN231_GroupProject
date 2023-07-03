@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
@@ -24,6 +25,13 @@ namespace GroupProject_HRM_Library.Repository.Implement
             this._unitOfWork = (UnitOfWork)unitOfWork;
             this._mapper = mapper;
         }
+
+        public async Task<Employee> Authenticate(AuthenRequest authenRequest)
+        {
+                var employee = await this._unitOfWork.EmployeeDAO.Authenticate(authenRequest.Username, authenRequest.Password);                
+                return employee;           
+        }
+
         public async Task<GetProfileResponse> GetProfileEmplAsync(int id)
         {
             try

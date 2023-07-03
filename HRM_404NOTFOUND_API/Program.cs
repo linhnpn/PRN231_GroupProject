@@ -110,7 +110,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.ConfigureExceptionMiddleware();
-app.UseMiddleware<JWTMiddleWare>();
 
 app.UseAuthentication();
 app.UseHttpsRedirection();

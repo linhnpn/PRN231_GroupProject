@@ -14,6 +14,6 @@ namespace GroupProject_HRM_Library.Repository.Interface
     {
         public Task<GetProfileResponse> GetProfileEmplAsync(int id);
 
-        public Task<Employee> Authenticate(AuthenRequest authenRequest);
+        public Task<AuthenResponse> Authenticate(AuthenRequest authenRequest);
     }
 }

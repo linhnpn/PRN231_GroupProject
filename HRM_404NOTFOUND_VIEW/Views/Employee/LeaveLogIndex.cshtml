@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+
+
+<div>
+    <div>
+        <h3> Leave Log Request</h3>
+        <div class="mt-2">
+            <a href="/Employee/CreateLeaveLog" class="btn btn-info">Create new Request</a>
+        </div>
+        <hr />
+    </div>
+    <div id="example">
+        <div id="leaveLogGrid"></div>
+        <div id="detailsLeaveLog"></div>
+        <div id="cancelLeaveLogs"></div>
+    </div>
+</div>
+
+<script type="text/x-kendo-template" id="templateDetails">
+    <div id="detailsLeaveLog-container">
+        <h5>Fullname: #= employee.employeeName #</h5>
+        <dl>
+            <dt>Start: #= kendo.toString(date, "D") #</dt>
+            <dt>End: #= kendo.toString(date, "D") #</dt>
+        </dl>
+        <em>Log Date: #= kendo.toString(date, "D") #</em>
+            <p>Reason: #= reason #</p>
+            # if (linkProof !== "") { #
+            File: <a href="#= linkProof #" target="_blank">Click here</a>
+        # } #
+            # if (leaveLogStatus === 1) { #
+            <p>Status: Accept</p>
+        # } else if (leaveLogStatus === -1) { #
+            <p>Status: Reject</p>
+            <p>Reject Reason: #= rejectReson #</p>
+            # } else { #
+                <p>Status: Waiting</p>
+                <button class="btn btn-danger" id="cancelButton">Cancel</button>
+            # } #
+        <button class="btn btn-warning float-right" id="closeButton">Close</button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="templateCancel">
+    <div id="cancelLeaveLogs-container">
+        <h5>Do you want to cancel this request?</h5>
+        <button class="btn btn-info" id="cancelLeaveLogBtn">Accept</button>
+        <button class="btn btn-warning float-right" id="closeCancelButton">Close</button>
+    </div>
+</script>
+
+<script>
+    var wnd, cnd,
+        detailsTemplate;
+    $(document).ready(function () {
+        var grid = $("#leaveLogGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        sessionStorage.setItem('id', '1');
+                        $.ajax({
+                            url: "https://localhost:5000/api/LeaveLog/employee?id=" + sessionStorage.getItem('id'),
+                            type: "GET",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    }
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "leaveLogID",
+                        fields: {
+                            leaveLogID: { type: "number" },
+                            date: { type: "date" },
+                            reason: { type: "string" },
+                            rejectReson: { type: "string" },
+                            leaveLogStatus: { type: "number" },
+                            linkProof: { type: "string" }
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "leaveLogID",
+                title: "ID",
+                filterable: { multi: true }
+            }, {
+                field: "date",
+                title: "Start Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+
+            }, {
+                field: "date",
+                title: "End Date",
+                filterable: {
+                    multi: true
+                },
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "reason",
+                title: "Reason",
+                filterable: { multi: true },
+            },
+            {
+                field: "rejectReson",
+                title: "Reject Reason",
+                filterable: { multi: true }
+            }, {
+                field: "leaveLogStatus",
+                title: "Status",
+                filterable: { multi: true },
+                template: function (dataItem) {
+                    if (dataItem.leaveLogStatus == 0) return "Waiting";
+                    if (dataItem.leaveLogStatus == 2) return "Cancel";
+                    if (dataItem.leaveLogStatus == 1) return "Approve";
+                    if (dataItem.leaveLogStatus == -1) return "Reject";
+                    return "-";
+                }
+            },
+            { command: { text: "Cancel", click: cancelLeaveLog }, title: " ", width: "80" },
+            { command: { text: "Detail", click: showDetails }, title: " ", width: "80" }
+            ]
+        }).data("kendoGrid");
+        wnd = $("#detailsLeaveLog")
+            .kendoWindow({
+                title: "Leave Log Details",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 300
+            }).data("kendoWindow");
+
+        cnd = $("#cancelLeaveLogs")
+            .kendoWindow({
+                title: "Cancel",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 400
+            }).data("kendoWindow");
+
+        detailsTemplate = kendo.template($("#templateDetails").html());
+        cancelTemplate = kendo.template($("#templateCancel").html());
+    });
+
+    function cancelLeaveLog(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        cnd.content(cancelTemplate(dataItem));
+        $("#closeCancelButton").on("click", function () {
+            cnd.close();
+        });
+
+        $("#cancelLeaveLogBtn").on("click", function () {
+            cancelLeaveLogApi(dataItem.leaveLogID);
+            cnd.close();
+        });
+
+        cnd.center().open();
+    }
+
+    function cancelLeaveLogs(dataItem) {
+        cnd.content(cancelTemplate(dataItem));
+        $("#closeCancelButton").on("click", function () {
+            cnd.close();
+        });
+
+        $("#cancelLeaveLogBtn").on("click", function () {
+            cancelLeaveLogApi(dataItem.leaveLogID);
+            cnd.close();
+        });
+
+        cnd.center().open();
+    }
+
+    function showDetails(e) {
+        e.preventDefault();
+
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        wnd.content(detailsTemplate(dataItem));
+
+        $("#closeButton").on("click", function () {
+            wnd.close();
+        });
+
+        $("#cancelButton").on("click", function () {
+            cancelLeaveLogs(dataItem);
+        });
+
+        wnd.center().open();
+    }
+
+    function cancelLeaveLogApi(id) {
+        $.ajax({
+            url: "https://localhost:5000/api/LeaveLog/status/" + id + "?status=2",
+            type: "PUT",
+            success: function (result) {
+                var grid = $("#leaveLogGrid").data("kendoGrid");
+                grid.dataSource.read();
+                grid.refresh();
+                demo.showNotification();
+            },
+            error: function (result) {
+                console.log(result);
+                demo.showNotification();
+            }
+        });
+    }
+</script>

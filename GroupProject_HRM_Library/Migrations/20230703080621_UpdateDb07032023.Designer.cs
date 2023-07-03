@@ -4,14 +4,16 @@ using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GroupProject_HRM_Library.Migrations
 {
     [DbContext(typeof(HumanResourceManagementContext))]
-    partial class HumanResourceManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20230703080621_UpdateDb07032023")]
+    partial class UpdateDb07032023
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

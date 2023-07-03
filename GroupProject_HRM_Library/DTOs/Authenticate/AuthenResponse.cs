@@ -8,6 +8,7 @@ namespace GroupProject_HRM_Library.DTOs.Authenticate
 {
     public class AuthenResponse
     {
+        public string RoleName { get; set; }
         public string AccessToken { get; set; }
     }
 }

@@ -11,6 +11,6 @@ namespace GroupProject_HRM_Library.Models
         public DateTime Timestamp { get; set; }
         public bool isRead { get; set; }
         public int EmployeeID { get; set; }
-        public Employee Employee { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

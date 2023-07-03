@@ -6,12 +6,8 @@ using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Models;
 using GroupProject_HRM_Library.Repository.Interface;
+using GroupProject_HRM_Library.Services;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.Repository.Implement
 {
@@ -19,17 +15,50 @@ namespace GroupProject_HRM_Library.Repository.Implement
     {
         private UnitOfWork _unitOfWork;
         private IMapper _mapper;
+        private IJWTServices jWTServices;
 
-        public EmployeeRepository(IUnitOfWork unitOfWork, IMapper mapper)
+        public EmployeeRepository(IUnitOfWork unitOfWork, IMapper mapper, IJWTServices jWTServices)
         {
             this._unitOfWork = (UnitOfWork)unitOfWork;
             this._mapper = mapper;
+            this.jWTServices = jWTServices;
         }
 
-        public async Task<Employee> Authenticate(AuthenRequest authenRequest)
+        public async Task<AuthenResponse> Authenticate(AuthenRequest authenRequest)
         {
-                var employee = await this._unitOfWork.EmployeeDAO.Authenticate(authenRequest.Username, authenRequest.Password);                
-                return employee;           
+            try
+            {
+                var employee = await this._unitOfWork.EmployeeDAO.Authenticate(authenRequest.Username, authenRequest.Password);
+
+                if (employee == null)
+                {
+                    throw new UnauthorizedException("Username or Password is invalid.");
+                }
+
+                var accessToken = jWTServices.GenerateJWTToken(employee.EmployeeID, employee.UserName, employee.Role.RoleName);
+                AuthenResponse authenResponse = new AuthenResponse()
+                {
+                    RoleName = employee.Role.RoleName,
+                    AccessToken = accessToken
+                };
+                return authenResponse;
+
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                errors.Add(error);
+                if (ex.Message.Contains("Username or Password is invalid."))
+                {
+                    throw new UnauthorizedException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<GetProfileResponse> GetProfileEmplAsync(int id)

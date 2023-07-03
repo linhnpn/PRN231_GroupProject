@@ -19,7 +19,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post OvertimeLog")]
-        public async Task<IActionResult> PostOvertimeLogAsync([FromForm] OvertimeLogRequest request)
+        public async Task<IActionResult> PostOvertimeLogAsync(OvertimeLogRequest request)
         {
             if (!ModelState.IsValid)
             {

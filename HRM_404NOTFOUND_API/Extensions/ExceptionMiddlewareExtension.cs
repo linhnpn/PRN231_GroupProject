@@ -5,6 +5,7 @@
         public static void ConfigureExceptionMiddleware(this IApplicationBuilder app)
         {
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<JWTMiddleWare>();
         }
     }
 }

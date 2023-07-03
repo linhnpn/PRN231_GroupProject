@@ -5,6 +5,7 @@ using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Profiles;
 using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
+using GroupProject_HRM_Library.Services;
 using System.Text.Json.Serialization;
 using GroupProject_HRM_Library.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,10 +31,11 @@ builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IOvertimeLogRepository, OvertimeLogRepository>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
 builder.Services.AddScoped<IJWTServices, JWTServices>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile), typeof(OvertimeLogProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "serviceFirebase.json");
@@ -108,7 +110,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.ConfigureExceptionMiddleware();
-app.UseMiddleware<JWTMiddleWare>();
 
 app.UseAuthentication();
 app.UseHttpsRedirection();

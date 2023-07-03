@@ -9,7 +9,7 @@ namespace GroupProject_HRM_Library.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int EmployeeProjectStatus { get; set; }
-        public Employee Employee { get; set; }
-        public Project Project { get; set; }
+        public Employee? Employee { get; set; }
+        public Project? Project { get; set; }
     }
 }

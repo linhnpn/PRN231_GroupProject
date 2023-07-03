@@ -1,4 +1,6 @@
 ﻿using GroupProject_HRM_Library.DTOs.Authenticate;
+using GroupProject_HRM_Library.DTOs.Employee;
+using GroupProject_HRM_Library.DTOs.Income;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
@@ -24,27 +26,14 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost("Authenticate")]
-        public IActionResult Authenticate(AuthenRequest authenRequest)
+        public async Task<IActionResult> Authenticate(AuthenRequest authenRequest)
         {
-            var employee = employeeRepository.Authenticate(authenRequest).Result;     
-            if(employee == null)
+            var employee = await employeeRepository.Authenticate(authenRequest);
+            return Ok(new
             {
-                List<ErrorDetail> errors = new List<ErrorDetail>();
-                ErrorDetail error = new ErrorDetail()
-                {
-                    FieldNameError = "Exception",
-                    DescriptionError = new List<string>() { "Username or Password is invalid." }
-                };
-                errors.Add(error);
-                var message = JsonConvert.SerializeObject(errors);
-                throw new UnauthorizedException(message);
-            }
-            var accessToken = jWTServices.GenerateJWTToken(employee.EmployeeID, employee.UserName, employee.Role.RoleName);
-            AuthenResponse authenResponse = new AuthenResponse()
-            {
-                AccessToken = accessToken
-            };
-            return Ok(accessToken);
+                Success = true,
+                Data = employee
+            });
         }
     }
 }

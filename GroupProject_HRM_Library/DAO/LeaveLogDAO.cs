@@ -50,11 +50,13 @@ namespace GroupProject_HRM_Library.DAO
                     return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.EmployeeID == emplID)
+                                            .OrderBy(x => x.Date)
                                             .ToListAsync();
                 }
                 return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.EmployeeID == emplID && x.LeaveLogStatus == status)
+                                            .OrderBy(x => x.Date)
                                             .ToListAsync();
             }
             catch (Exception ex)
@@ -95,11 +97,13 @@ namespace GroupProject_HRM_Library.DAO
                     return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.Employee.EmployeeProjects.Any(p => p.ProjectID == projectID))
+                                            .OrderBy(x => x.Date)
                                             .ToListAsync();
                 }
                 return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.Employee.EmployeeProjects.Any(p => p.ProjectID == projectID) && x.LeaveLogStatus == status)
+                                            .OrderBy(x => x.Date)
                                             .ToListAsync();
 
             }
@@ -117,12 +121,14 @@ namespace GroupProject_HRM_Library.DAO
                 {
                     return await this._dbContext.LeaveLogs
                         .Include(x => x.Employee)
+                        .OrderBy(x => x.Date)
                         .ToListAsync();
                 }
 
                 return await this._dbContext.LeaveLogs
                     .Include(x => x.Employee)
                     .Where(x => x.LeaveLogStatus == status)
+                    .OrderBy(x => x.Date)
                     .ToListAsync();
 
             }

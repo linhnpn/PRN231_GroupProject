@@ -1,34 +1,28 @@
 ﻿using GroupProject_HRM_Library.DTOs.Authenticate;
-using GroupProject_HRM_Library.Models;
-using HRM_404NOTFOUND_VIEW.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
+using System.Text;
+using HRM_404NOTFOUND_VIEW.Models;
+using System.Diagnostics;
+using GroupProject_HRM_View.Constants;
 
-namespace HRM_404NOTFOUND_VIEW.Controllers
+namespace GroupProject_HRM_View.Controllers
 {
-    public class HomeController : Controller
+    public class AuthController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<AuthController> _logger;
         private readonly HttpClient client = null;
         private string AuthenAPI_URL = "";
 
-        public HomeController(ILogger<HomeController> logger)
+        public AuthController(ILogger<AuthController> logger)
         {
             _logger = logger;
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
-            client.BaseAddress = new Uri("https://localhost:7284");
+            client.BaseAddress = new Uri("https://localhost:5000");
             AuthenAPI_URL = "/api/Auth";
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpPost]
@@ -45,23 +39,37 @@ namespace HRM_404NOTFOUND_VIEW.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 ViewBag.error = "Username or Password is invalid.";
-                return View("Index");
+                return View();
             }
             string jsonResponse = await response.Content.ReadAsStringAsync();
             var authenResponse = JsonSerializer.Deserialize<AuthenResponse>(jsonResponse, options);
-            HttpContext.Session.SetString("ACCESS_TOKEN", authenResponse.AccessToken);
-            //return main page
-            return View();
+            HttpContext.Session.SetString("ACCESS_TOKEN", authenResponse!.AccessToken);
+            HttpContext.Session.SetString("ROLE_NAME", authenResponse!.RoleName);
+
+            if (authenResponse!.RoleName == Constants.Constants.ADMIN)
+            {
+                return base.Redirect(Constants.Constants.ADMIN_URL);
+            }
+            else if (authenResponse!.RoleName == Constants.Constants.MANAGER)
+            {
+                return base.Redirect(Constants.Constants.MANAGER_URL);
+            } 
+            else
+            {
+                return base.Redirect(Constants.Constants.EMPLOYEE_URL);
+            }
+
         }
-        public IActionResult Privacy()
+
+        public IActionResult Login()
         {
             return View();
         }
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("ACCESS_TOKEN");
-            return RedirectToAction("Index");
+            HttpContext.Session.Clear();
+            return Redirect(Constants.Constants.LOGIN_URL);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -9,7 +10,7 @@
 <title></title>
 
 <div>
-    <h3> Your Income</h3>
+    <h3>Project Management</h3>
     <hr />
 </div>
 <div id="example">
@@ -22,8 +23,11 @@
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "https://localhost:5000/api/Income/1",
+                            url: "https://localhost:5000/api/Project",
                             type: "GET",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             success: function (result) {
                                 options.success(result);
                             },
@@ -36,13 +40,13 @@
                 schema: {
                     data: "data",
                     model: {
-                        id: "incomeID",
+                        id: "projectID",
                         fields: {
-                            incomeID: { type: "number" },
-                            startDate: { type: "date" },
-                            endDate: { type: "date" },
-                            previousRentIncome: { type: "number" },
-                            afterRentIncome: { type: "number" }
+                            projectID: { type: "number" },
+                            projectName: { type: "string" },
+                            projectStatus: { type: "string" },
+                            projectParticipations: { type: "number" },
+                            projectBonus: { type: "number" }
                         }
                     }
                 },
@@ -57,30 +61,26 @@
                 buttonCount: 5
             },
             columns: [{
-                field: "incomeID",
+                field: "projectID",
                 title: "ID",
                 filterable: { multi: true }
             }, {
-                field: "startDate",
-                title: "Start Date",
-                filterable: { multi: true },
-                format: "{0:dd-MM-yyyy}"
-
+                field: "projectName",
+                title: "Project Name",
+                filterable: { multi: true }
             }, {
-                field: "endDate",
-                title: "End Date",
+                field: "projectStatus",
+                title: "Status",
                 filterable: {
-                    multi: true
-                },
-                format: "{0:dd-MM-yyyy}"
+                    multi: true }
             }, {
-                field: "previousRentIncome",
-                title: "Previous Rent Income",
+                field: "projectParticipations",
+                title: "Project Participations",
                 filterable: { multi: true },
             },
             {
-                field: "afterRentIncome",
-                title: "After Rent Income",
+                field: "projectBonus",
+                title: "Bonus",
                 filterable: { multi: true }
             }]
         });

@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -22,7 +23,10 @@
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "https://localhost:5000/api/Income/1",
+                            url: "https://localhost:5000/api/Income/" + + sessionStorage.getItem('EMPLOYEE_ID'),
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             type: "GET",
                             success: function (result) {
                                 options.success(result);

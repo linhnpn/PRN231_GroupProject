@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
     ViewData["Title"] = "OverTime Log Page";
 }
 <style>
@@ -41,6 +42,9 @@
                         $.ajax({
                             url: "https://localhost:5000/api/OvertimeLog/project?projectId=1",
                             type: "GET",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             success: function (result) {
                                 options.success(result);
                             },

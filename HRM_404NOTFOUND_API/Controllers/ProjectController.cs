@@ -1,9 +1,7 @@
 ﻿using GroupProject_HRM_Library.DTOs.Project;
-using GroupProject_HRM_Library.DTOs.Tax;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
-using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

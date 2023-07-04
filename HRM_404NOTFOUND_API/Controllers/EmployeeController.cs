@@ -1,7 +1,6 @@
 ﻿using GroupProject_HRM_Library.DTOs.Employee;
-using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Repository.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroupProject_HRM_Api.Controllers

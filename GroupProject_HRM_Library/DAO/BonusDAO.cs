@@ -1,4 +1,4 @@
-﻿using GroupProject_HRM_Library.Models;
+using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GroupProject_HRM_Library.DAO
@@ -31,6 +31,18 @@ namespace GroupProject_HRM_Library.DAO
             {
                 return await this._dbContext.Bonuses.Where(x => x.EmployeeID == id && x.Timestamp > start)
                                         .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task CreateBonusAsync(Bonus bonus)
+        {
+            try
+            {
+                await this._dbContext.Bonuses.AddAsync(bonus);
             }
             catch (Exception ex)
             {

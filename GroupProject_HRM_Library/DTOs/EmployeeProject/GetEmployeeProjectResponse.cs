@@ -17,6 +17,6 @@ namespace GroupProject_HRM_Library.DTOs.EmployeeProject
         public string? RoleName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public EmployeeProjectEnum.EmpProStatus EmployeeProjectStatus { get; set; }
+        public int EmployeeProjectStatus { get; set; }
     }
 }

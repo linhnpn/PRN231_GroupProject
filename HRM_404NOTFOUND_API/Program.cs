@@ -1,4 +1,4 @@
-﻿using Google.Cloud.Storage.V1;
+using Google.Cloud.Storage.V1;
 using GroupProject_HRM_Api.Middlewares;
 using GroupProject_HRM_Library.Constaints;
 using GroupProject_HRM_Library.Infrastructure;
@@ -7,7 +7,6 @@ using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
 using GroupProject_HRM_Library.Services;
 using System.Text.Json.Serialization;
-using GroupProject_HRM_Library.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -34,8 +33,9 @@ builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
 builder.Services.AddScoped<IJWTServices, JWTServices>();
+builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 
-builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile), typeof(OvertimeLogProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile));
+builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(TaxProfile), typeof(OvertimeLogProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile), typeof(BonusProfile));
 
 builder.Services.AddTransient<ExceptionMiddleware>();
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "serviceFirebase.json");

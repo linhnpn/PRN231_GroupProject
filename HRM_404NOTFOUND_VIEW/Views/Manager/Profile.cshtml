@@ -1,6 +1,6 @@
 ﻿@model GroupProject_HRM_Library.DTOs.Employee.GetProfileResponse
 @{
-    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
     ViewData["Title"] = "Profile";
 }
 <style>
@@ -24,8 +24,8 @@
                                     <input type="text"
                                            class="form-control"
                                            disabled
-                                           placeholder="Project"
-                                           value="@Model.GetEmployeeProjectResponse.ProjectID" />
+                                           placeholder="Empty"
+                                           value="@((Model.GetEmployeeProjectResponse != null) ? Model.GetEmployeeProjectResponse.ProjectID : "")" />
                                 </div>
                             </div>
                             <div class="col-md-3">

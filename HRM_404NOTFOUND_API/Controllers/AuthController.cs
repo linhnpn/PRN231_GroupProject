@@ -1,12 +1,7 @@
 ﻿using GroupProject_HRM_Library.DTOs.Authenticate;
-using GroupProject_HRM_Library.DTOs.Employee;
-using GroupProject_HRM_Library.DTOs.Income;
-using GroupProject_HRM_Library.Errors;
-using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
 using GroupProject_HRM_Library.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace GroupProject_HRM_Api.Controllers
 {

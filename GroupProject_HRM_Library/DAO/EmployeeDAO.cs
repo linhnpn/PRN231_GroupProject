@@ -1,6 +1,7 @@
 ﻿using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +33,16 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Employees
-                    .Include(x => x.EmployeeProjects)
-                    .ThenInclude(ep => ep.Project)
-                    .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress))
-                    .FirstOrDefaultAsync(x => x.EmployeeID == id);
+                var result = await _dbContext.Employees
+                        .Include(x => x.EmployeeProjects)
+                            .ThenInclude(ep => ep.Project)
+                            .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress))
+                            .FirstOrDefaultAsync(x => x.EmployeeID == id);
+                if (result == null)
+                {
+                    result = await _dbContext.Employees.FirstOrDefaultAsync(x => x.EmployeeID == id);
+                }
+                return result;
             }
             catch (Exception ex)
             {

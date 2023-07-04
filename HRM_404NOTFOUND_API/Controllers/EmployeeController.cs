@@ -16,7 +16,6 @@ namespace GroupProject_HRM_Api.Controllers
             this._employeeRepository = _employeeRepository;
         }
         [HttpGet("{id}"), ActionName("Get Profile")]
-        [Authorize]
         public async Task<IActionResult> GetProfileAsync([FromRoute] int id)
         {
             GetProfileResponse getProfileResponse = await this._employeeRepository.GetProfileEmplAsync(id);

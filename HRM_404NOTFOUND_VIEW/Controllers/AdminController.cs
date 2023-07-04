@@ -19,8 +19,28 @@ namespace GroupProject_HRM_View.Controllers
             LeaveLogApiUrl = "https://localhost:5000/api/LeaveLog";
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
         }
-        public IActionResult Index()
+        public IActionResult ProjectIndex()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE_URL)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
 

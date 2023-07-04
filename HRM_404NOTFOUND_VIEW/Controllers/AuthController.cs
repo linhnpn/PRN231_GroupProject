@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text;
 using HRM_404NOTFOUND_VIEW.Models;
 using System.Diagnostics;
-using GroupProject_HRM_View.Constants;
+using GroupProject_HRM_View.Models.Auth;
 
 namespace GroupProject_HRM_View.Controllers
 {
@@ -42,18 +42,26 @@ namespace GroupProject_HRM_View.Controllers
                 return View();
             }
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            var authenResponse = JsonSerializer.Deserialize<AuthenResponse>(jsonResponse, options);
-            HttpContext.Session.SetString("ACCESS_TOKEN", authenResponse!.AccessToken);
-            HttpContext.Session.SetString("ROLE_NAME", authenResponse!.RoleName);
-
-            if (authenResponse!.RoleName == Constants.Constants.ADMIN)
+            var authenResponse = JsonSerializer.Deserialize<GetAuthResponse>(jsonResponse, options);
+            var reponseAuthen = authenResponse.Data;
+            if (authenResponse.Success)
+            {
+                HttpContext.Session.SetString("ACCESS_TOKEN", reponseAuthen.AccessToken);
+                HttpContext.Session.SetString("ROLE_NAME", reponseAuthen.RoleName);
+                HttpContext.Session.SetString("EMPLOYEE_ID", reponseAuthen.EmployeeID.ToString());
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", reponseAuthen.AccessToken);
+                TempData["ACCESS_TOKEN"] = reponseAuthen.AccessToken;
+                TempData["ROLE_NAME"] = reponseAuthen.RoleName;
+                TempData["EMPLOYEE_ID"] = reponseAuthen.EmployeeID.ToString();
+            }
+            if (reponseAuthen!.RoleName == Constants.Constants.ADMIN)
             {
                 return base.Redirect(Constants.Constants.ADMIN_URL);
             }
-            else if (authenResponse!.RoleName == Constants.Constants.MANAGER)
+            else if (reponseAuthen!.RoleName == Constants.Constants.MANAGER)
             {
                 return base.Redirect(Constants.Constants.MANAGER_URL);
-            } 
+            }
             else
             {
                 return base.Redirect(Constants.Constants.EMPLOYEE_URL);
@@ -62,6 +70,30 @@ namespace GroupProject_HRM_View.Controllers
         }
 
         public IActionResult Login()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(role))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.ADMIN_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.MANAGER_URL);
+                }
+                else if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.EMPLOYEE_URL);
+                }
+            }
+
+            return View();
+        }
+
+        public IActionResult NotFound()
         {
             return View();
         }

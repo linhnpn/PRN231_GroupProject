@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -59,14 +60,17 @@
 <script>
     var wnd, cnd,
         detailsTemplate;
+    var id = sessionStorage.getItem('EMPLOYEE_ID');
     $(document).ready(function () {
         var grid = $("#leaveLogGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
-                        sessionStorage.setItem('id', '1');
                         $.ajax({
-                            url: "https://localhost:5000/api/LeaveLog/employee?id=" + sessionStorage.getItem('id'),
+                            url: "https://localhost:5000/api/LeaveLog/employee?id=" + sessionStorage.getItem("EMPLOYEE_ID"),
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             type: "GET",
                             success: function (result) {
                                 options.success(result);
@@ -92,6 +96,18 @@
                     }
                 },
                 pageSize: 20
+            },
+            dataBound: function (e) {
+                var grid = this;
+                grid.tbody.find("tr").each(function () {
+                    var dataItem = grid.dataItem(this);
+
+                    if (dataItem.leaveLogStatus !== 0) {
+                        var cancelButton = $(this).find(".k-grid-Cancel");
+                        cancelButton.addClass("k-disabled");
+                        cancelButton.prop("disabled", true);
+                    }
+                });
             },
             height: 550,
             sortable: true,
@@ -216,6 +232,9 @@
         $.ajax({
             url: "https://localhost:5000/api/LeaveLog/status/" + id + "?status=2",
             type: "PUT",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
             success: function (result) {
                 var grid = $("#leaveLogGrid").data("kendoGrid");
                 grid.dataSource.read();
@@ -223,7 +242,6 @@
                 demo.showNotification();
             },
             error: function (result) {
-                console.log(result);
                 demo.showNotification();
             }
         });

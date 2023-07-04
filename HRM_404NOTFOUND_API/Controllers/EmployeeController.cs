@@ -1,7 +1,6 @@
 ﻿using GroupProject_HRM_Library.DTOs.Employee;
-using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Repository.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroupProject_HRM_Api.Controllers
@@ -17,6 +16,7 @@ namespace GroupProject_HRM_Api.Controllers
             this._employeeRepository = _employeeRepository;
         }
         [HttpGet("{id}"), ActionName("Get Profile")]
+        [Authorize]
         public async Task<IActionResult> GetProfileAsync([FromRoute] int id)
         {
             GetProfileResponse getProfileResponse = await this._employeeRepository.GetProfileEmplAsync(id);

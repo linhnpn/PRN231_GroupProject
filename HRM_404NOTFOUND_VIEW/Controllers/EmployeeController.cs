@@ -1,6 +1,9 @@
 ﻿using GroupProject_HRM_Library.DTOs.LeaveLog;
+using GroupProject_HRM_Library.Models;
+using GroupProject_HRM_View.Models.Employee;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace GroupProject_HRM_View.Controllers
 {
@@ -8,6 +11,7 @@ namespace GroupProject_HRM_View.Controllers
     {
         private readonly HttpClient client = null;
         private string LeaveLogApiUrl = "";
+        private string EmployeeApiUrl = "";
 
         public EmployeeController()
         {
@@ -15,20 +19,100 @@ namespace GroupProject_HRM_View.Controllers
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             LeaveLogApiUrl = "https://localhost:5000/api/LeaveLog";
+            EmployeeApiUrl = "https://localhost:5000/api/Employee";
+        }
+
+        private IActionResult? HandleRoleAccess(string role)
+        {
+            if (role == Constants.Constants.ADMIN || role == Constants.Constants.MANAGER)
+            {
+                return Redirect(Constants.Constants.NOTFOUND_URL);
+            }
+            return null;
+        }
+
+        private IActionResult? RedirectIfAccessTokenMissing()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+            return null;
         }
 
         public IActionResult Income()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
 
         public IActionResult LeaveLogIndex()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
 
         public IActionResult CreateLeaveLog()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
 
@@ -41,7 +125,8 @@ namespace GroupProject_HRM_View.Controllers
                 formData.Add(new StringContent(request.StartDate.ToString()), "StartDate");
                 formData.Add(new StringContent(request.EndDate.ToString()), "EndDate");
                 formData.Add(new StringContent(request.Reason != null ? request.Reason : ""), "Reason");
-                formData.Add(new StringContent("1"), "EmployeeID");
+                string? id = HttpContext.Session.GetString("EMPLOYEE_ID");
+                formData.Add(new StringContent(id), "EmployeeID");
 
                 // Add the file data
                 if (request.File != null && request.File.Length > 0)
@@ -66,20 +151,93 @@ namespace GroupProject_HRM_View.Controllers
                     TempData["Message"] = "Error while calling WebAPI!";
                 }
             }
+            else
+            {
+                return View();
+            }
             return Redirect("./LeaveLogIndex");
         }
 
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            return View();
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+           string? id = HttpContext.Session.GetString("EMPLOYEE_ID");
+            HttpResponseMessage response = await client.GetAsync(EmployeeApiUrl + $"/{id}");
+            string strData = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+
+            return View(data.Data);
         }
 
         public IActionResult EmployeeIndex()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
         public IActionResult OvertimeLogIndex()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
     }

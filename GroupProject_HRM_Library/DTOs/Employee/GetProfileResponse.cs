@@ -11,6 +11,7 @@ namespace GroupProject_HRM_Library.DTOs.Employee
     {
         public int EmployeeID { get; set; }
         public string EmployeeName { get; set; }
+        public string UserName { get; set; }
         public string EmployeeImage { get; set; }
         public int Address { get; set; }
         public string Gender { get; set; }

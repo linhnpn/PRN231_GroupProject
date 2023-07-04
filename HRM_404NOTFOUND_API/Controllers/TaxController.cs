@@ -76,7 +76,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // POST api/<TaxController>
         [HttpPost, ActionName("PostTax")]
-        public async Task<IActionResult> PostTaxAsync([FromForm] CreateTaxRequest value)
+        public async Task<IActionResult> PostTaxAsync([FromBody] CreateTaxRequest value)
         {
             if(!ModelState.IsValid)
             {
@@ -107,7 +107,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // PUT api/<TaxController>/5
         [HttpPut("{id}"), ActionName("PutTax")]
-        public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromForm] UpdateTaxRequest value)
+        public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromBody] UpdateTaxRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -140,7 +140,7 @@ namespace GroupProject_HRM_Api.Controllers
         [HttpPut("{id}/Status"), ActionName("PutTaxStatus")]
         public async Task<IActionResult> PutTaxStatusAsync(
             [FromRoute] int id, 
-            [Required(ErrorMessage = "Tax Status is required")][FromForm] TaxEnum.TaxStatus value)
+            [Required(ErrorMessage = "Tax Status is required")][FromBody] TaxEnum.TaxStatus value)
         {
             if (!ModelState.IsValid)
             {

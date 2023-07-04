@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -44,10 +45,12 @@
             dataSource: {
                 transport: {
                     read: function (options) {
-                        sessionStorage.setItem('id', '1');
                         $.ajax({
-                            url: "https://localhost:5000/api/OvertimeLog/employee?id=" + sessionStorage.getItem('id'),
+                            url: "https://localhost:5000/api/OvertimeLog/employee?id=" + sessionStorage.getItem('EMPLOYEE_ID'),
                             type: "GET",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             success: function (result) {
                                 options.success(result);
                             },

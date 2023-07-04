@@ -38,6 +38,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 var accessToken = jWTServices.GenerateJWTToken(employee.EmployeeID, employee.UserName, employee.Role.RoleName);
                 AuthenResponse authenResponse = new AuthenResponse()
                 {
+                    EmployeeID = employee.EmployeeID,
                     RoleName = employee.Role.RoleName,
                     AccessToken = accessToken
                 };

@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - HRM_404NOTFOUND_VIEW</title>
+    <title>@ViewData["Title"] - Manager</title>
     @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/kendo/styles/default-main.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HRM_404NOTFOUND_VIEW.styles.css" asp-append-version="true" />
+    @*<link rel="stylesheet" href="~/HRM_404NOTFOUND_VIEW.styles.css" asp-append-version="true" />*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <link rel="apple-touch-icon" sizes="76x76" href="~/assets/img/apple-icon.png" />
@@ -26,49 +26,49 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="sidebar" data-image="~/assets/img/sidebar-4.jpg">
+        <div class="sidebar" data-image="https://firebasestorage.googleapis.com/v0/b/hrm-resource.appspot.com/o/sidebar-4.jpg?alt=media">
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a class="simple-text"> Human Resource Management </a>
                 </div>
                 <ul class="nav">
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a class="nav-link" href="/Employee/LeaveLogIndex">
                             <i class="nc-icon nc-chart-pie-35"></i>
                             <p>Leave Log Request</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./user.html">
                             <i class="nc-icon nc-circle-09"></i>
                             <p>User Profile</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./table.html">
                             <i class="nc-icon nc-notes"></i>
                             <p>Table List</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./typography.html">
                             <i class="nc-icon nc-paper-2"></i>
                             <p>Typography</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./icons.html">
                             <i class="nc-icon nc-atom"></i>
                             <p>Icons</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./maps.html">
                             <i class="nc-icon nc-pin-3"></i>
                             <p>Maps</p>
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a class="nav-link" href="./notifications.html">
                             <i class="nc-icon nc-bell-55"></i>
                             <p>Notifications</p>
@@ -144,7 +144,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#pablo">
+                                <a class="nav-link" onclick="logout" asp-controller="Auth" asp-action="Logout">
                                     <span class="no-icon">Log out</span>
                                 </a>
                             </li>
@@ -180,8 +180,8 @@
                             <script>
                                 document.write(new Date().getFullYear());
                             </script>
-                            <a href="http://www.creative-tim.com">Creative Tim</a>, made
-                            with love for a better web
+                            <a href="#">Human Resource Management</a>, made
+                            with love for a better management app
                         </p>
                     </nav>
                 </div>
@@ -206,12 +206,59 @@
             type="text/javascript"></script>
     <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
     <script src="~/assets/js/demo.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            demo.showNotification();
-        });
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
+<script>
+    function logout() {
+        sessionStorage.clear();
+    }
+</script>
+
+@if (TempData["ACCESS_TOKEN"] != null)
+{
+    <text>
+        <script>
+            sessionStorage.setItem("ACCESS_TOKEN", '@TempData["ACCESS_TOKEN"]');
+            sessionStorage.setItem("ROLE_NAME", '@TempData["ROLE_NAME"]');
+            sessionStorage.setItem("EMPLOYEE_ID", '@TempData["EMPLOYEE_ID"]');
+        </script>
+    </text>
+}
+@if (TempData["Message"] != null)
+{
+    <text>
+        <script>
+            $(document).ready(function () {
+
+                demo.showNotification('@TempData["Message"]', 1);
+            });
+
+        </script>
+    </text>
+}
+
+@if (TempData["Error"] != null)
+{
+    <text>
+        <script>
+            $(document).ready(function () {
+
+                demo.showNotification('@TempData["Error"]', 4);
+            });
+
+        </script>
+    </text>
+}
+
+<script>
+    $(function () {
+        var currentUrl = window.location.pathname;
+        var $navItems = $('.nav-item');
+
+        $navItems.removeClass('active');
+
+        $navItems.find('a[href="' + currentUrl + '"]').parent().addClass('active');
+    });
+</script>
 </html>

@@ -14,6 +14,7 @@ namespace GroupProject_HRM_Library.Profiles
         public LeaveLogProfile()
         {
             CreateMap<LeaveLog, LeaveLogRequest>().ReverseMap();
+            CreateMap<LeaveLog, LeaveLogManagerRequest>().ReverseMap();
             CreateMap<LeaveLog, GetLeaveLogResponse>().ReverseMap();
         }
     }

@@ -13,6 +13,7 @@ namespace GroupProject_HRM_Library.Profiles
     {
         public EmployeeProfile() {
             CreateMap<Employee, GetEmployeeResponse>().ReverseMap();
+            CreateMap<Employee, GetListEmployeeResponseIDandName>().ReverseMap();
             CreateMap<Employee, GetProfileResponse>().ForMember(dept => dept.GetEmployeeProjectResponse, opt => opt.MapFrom(src => src.EmployeeProjects.First()))
                 .ReverseMap();
         }

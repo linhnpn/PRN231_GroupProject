@@ -13,7 +13,9 @@ namespace GroupProject_HRM_Library.Repository.Interface
     public interface IEmployeeRepository
     {
         public Task<GetProfileResponse> GetProfileEmplAsync(int id);
-
         public Task<AuthenResponse> Authenticate(AuthenRequest authenRequest);
+        public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameAsync(int projectId);
+        public Task<List<GetEmployeeResponse>> GetListEmployeeResponseAsync(int projectId);
+        public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseNoPayRollAsync();
     }
 }

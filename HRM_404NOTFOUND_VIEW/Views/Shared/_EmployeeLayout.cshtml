@@ -192,6 +192,15 @@
 </body>
 
 <script>
+    function truncateString(value, maxLength) {
+        if (value && value.length > maxLength) {
+            return value.substring(0, maxLength) + "...";
+        }
+        return value;
+    }
+</script>
+
+<script>
     function logout() {
         sessionStorage.clear();
     }

@@ -12,27 +12,55 @@
 <div>
     <div>
         <h3>Overtime Request</h3>
+        <div class="mt-2">
+            <a href="/Manager/CreateOvertimeLog" class="btn btn-info">Create new Log</a>
+        </div>
         <hr />
     </div>
     <div id="example">
         <div id="overtimeGrid"></div>
         <div id="detailsOvertimeLog"></div>
+        <div id="doneOvertimeLog"></div>
+        <div id="cancelOvertimeLog"></div>
     </div>
 </div>
 
 <script type="text/x-kendo-template" id="templateDetails">
-    <div id="detailsOvertimeLog-container">
-        <h2>#= leaveLogID # #= leaveLogID #</h2>
-        <em>#= leaveLogID #</em>
+    <div id="detailsLeaveLog-container">
+        <h5>Fullname: #= employee.employeeName #</h5>
         <dl>
-            <dt>City: #= leaveLogID #</dt>
-            <dt>Birth Date: #= 111 #</dt>
+            <dt>Overtime Date: #= kendo.toString(overTimeDate, "D") #</dt>
         </dl>
-        <button class="btn btn-warning float-right" id="cancelButton">Cancel</button>
+        <em>Log Date: #= kendo.toString(logDate, "D") #</em>
+            <p>Description: #= description #</p>
+            # if (overtimeLogStatus === 1) { #
+            <p>Status: Done</p>
+        # } else if (overtimeLogStatus === -1) { #
+            <p>Status: Cancel</p>
+            # } else if ((overtimeLogStatus === 0)) { #
+                <p>Status: Waiting</p>
+            # } #
+        <button class="btn btn-warning float-right" id="closeDetailBtn">Close</button>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="templateDone">
+    <div id="doneOvertimeLogs-container">
+        <h5>Do you want to set this log to Done?</h5>
+        <button class="btn btn-info" id="doneOvertimebtn">Accept</button>
+        <button class="btn btn-warning float-right" id="closeOvertimeBtn">Close</button>
+    </div>
+</script>
+<script type="text/x-kendo-template" id="templateCancel">
+    <div id="cancelOvertimeLogs-container">
+        <h5>Do you want to cancel this log?</h5>
+        <button class="btn btn-info" id="cancelOvertimeBtn">Accept</button>
+        <button class="btn btn-warning float-right" id="closeCancelOvertimeBtn">Close</button>
     </div>
 </script>
 <script>
-    var wnd,
+    var wnd, dol, col,
+        doneOvertimeTemplate,
+        cancelOvertimeTemplate,
         detailsTemplate;
     $(document).ready(function () {
         var grid = $("#overtimeGrid").kendoGrid({
@@ -40,7 +68,7 @@
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "https://localhost:5000/api/OvertimeLog/project?projectId=1",
+                            url: "https://localhost:5000/api/OvertimeLog/mangager?managerId=" + sessionStorage.getItem('EMPLOYEE_ID'),
                             type: "GET",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
@@ -61,14 +89,30 @@
                         fields: {
                             overtimeID: { type: "number" },
                             overTimeDate: { type: "date" },
+                            logDate: { type: "date" },
                             hours: { type: "number" },
                             description: { type: "string" },
-                            leaveLogStatus: { type: "number" },
+                            overtimeLogStatus: { type: "number" },
                             employeeName: { type: "string" }
                         }
                     }
                 },
                 pageSize: 20
+            },
+            dataBound: function (e) {
+                var grid = this;
+                grid.tbody.find("tr").each(function () {
+                    var dataItem = grid.dataItem(this);
+
+                    if (dataItem.overtimeLogStatus === 0) {
+                        var acceptBtn = $(this).find(".k-grid-Done");
+                        acceptBtn.removeClass("k-disabled");
+                        acceptBtn.prop("disabled", false);
+                        var rejectBtn = $(this).find(".k-grid-Cancel");
+                        rejectBtn.removeClass("k-disabled");
+                        rejectBtn.prop("disabled", false);
+                    }
+                });
             },
             height: 550,
             sortable: true,
@@ -84,13 +128,19 @@
                 filterable: { multi: true }
             }, {
                 field: "overTimeDate",
-                title: "Start Date",
+                title: "Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+
+            },{
+                field: "logDate",
+                title: "Log Date",
                 filterable: { multi: true },
                 format: "{0:dd-MM-yyyy}"
 
             }, {
                 field: "hours",
-                title: "End Date",
+                title: "Number of hours",
                 filterable: {
                     multi: true
                 }
@@ -99,28 +149,45 @@
                 title: "Description",
                 filterable: { multi: true },
             }, {
-                field: "leaveLogStatus",
+                field: "overtimeLogStatus",
                 title: "Status",
                 filterable: { multi: true },
                 template: function (dataItem) {
-                    if (dataItem.leaveLogStatus == 0) return "Cancel";
-                    if (dataItem.leaveLogStatus == 1) return "Approve";
-                    if (dataItem.leaveLogStatus == -1) return "Reject";
+                    if (dataItem.overtimeLogStatus == 0) return "Waiting";
+                    if (dataItem.overtimeLogStatus == 1) return "Done";
+                    if (dataItem.overtimeLogStatus == -1) return "Cancel";
                     return "-";
                 }
             },
             {
                 field: "employee.employeeName",
-                title: "Name",
+                title: "Employee Name",
                 filterable: { multi: true },
             },
-            { command: { text: "Cancel Log", click: cancelLeaveLog }, title: " ", width: "150" },
+            { command: { text: "Done", click: doneOvertimeLog, className: "k-disabled" }, title: " ", width: "80" },
+            { command: { text: "Cancel", click: cancelOvertimeLog, className: "k-disabled" }, title: " ", width: "80" },
             { command: { text: "View Detail", click: showDetails }, title: " ", width: "150" }
             ]
         }).data("kendoGrid");
         wnd = $("#detailsOvertimeLog")
             .kendoWindow({
-                title: "Leave Log Details",
+                title: "Overtime Log Details",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 300
+            }).data("kendoWindow");
+        dol = $("#doneOvertimeLog")
+            .kendoWindow({
+                title: "Overtime Log",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 300
+            }).data("kendoWindow");
+        col = $("#cancelOvertimeLog")
+            .kendoWindow({
+                title: "Overtime Log",
                 modal: true,
                 visible: false,
                 resizable: false,
@@ -128,10 +195,64 @@
             }).data("kendoWindow");
 
         detailsTemplate = kendo.template($("#templateDetails").html());
+        doneOvertimeTemplate = kendo.template($("#templateDone").html());
+        cancelOvertimeTemplate = kendo.template($("#templateCancel").html());
     });
     function cancelLeaveLog(e) {
         e.preventDefault();
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+    }
+    function doneOvertimeLog(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        dol.content(doneOvertimeTemplate(dataItem));
+        $("#closeOvertimeBtn").on("click", function () {
+            dol.close();
+        });
+
+        $("#doneOvertimebtn").on("click", function () {
+            changeOvertimeApi(dataItem.overtimeID, 1);
+            dol.close();
+        });
+
+        dol.center().open();
+    }
+
+    function cancelOvertimeLog(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        col.content(cancelOvertimeTemplate(dataItem));
+        $("#closeCancelOvertimeBtn").on("click", function () {
+            col.close();
+        });
+
+        $("#cancelOvertimeBtn").on("click", function () {
+            changeOvertimeApi(dataItem.overtimeID, -1);
+            col.close();
+        });
+
+        col.center().open();
+    }
+
+    function changeOvertimeApi(id, status) {
+        $.ajax({
+            url: "https://localhost:5000/api/OvertimeLog/status/" + id + "?status=" + status,
+            type: "PUT",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            contentType: "application/json",
+            success: function (result) {
+                var grid = $("#overtimeGrid").data("kendoGrid");
+                grid.dataSource.read();
+                grid.refresh();
+                demo.showNotification(result['data'], 1);
+            },
+            error: function (result) {
+                demo.showNotification("An Error Occur", 4);
+            }
+        });
     }
 
     function showDetails(e) {
@@ -140,7 +261,7 @@
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
         wnd.content(detailsTemplate(dataItem));
 
-        $("#cancelButton").on("click", function () {
+        $("#closeDetailBtn").on("click", function () {
             wnd.close();
         });
 

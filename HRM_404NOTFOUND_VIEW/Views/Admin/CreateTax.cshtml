@@ -1,0 +1,41 @@
+﻿@model GroupProject_HRM_Library.DTOs.Tax.CreateTaxRequest
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Create Leave Log Page";
+}
+
+<div>
+    <h3>Create Request Leave Log</h3>
+    <hr />
+</div>
+<form method="post" asp-action="CreateTax" enctype="multipart/form-data">
+    <div class="row">
+        <div class="form-group col-6">
+            <label class="control-label">Salary Max:</label>
+            <input asp-for="SalaryMax" class="form-control" type="number" step="0.01" min="0">
+            <span asp-validation-for="SalaryMax" class="text-danger"></span>
+        </div>
+        <div class="form-group col-6">
+            <label class="control-label">SalaryMin:</label>
+            <input asp-for="SalaryMin" class="form-control" type="number" step="0.01" min="0">
+            <span asp-validation-for="SalaryMin" class="text-danger"></span>
+        </div>
+        <div class="form-group col-6">
+            <label class="control-label">Percent:</label>
+            <input asp-for="Percent" class="form-control" type="number" step="0.01" min="0" max="10">
+            <span asp-validation-for="Percent" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group float-right mt-3">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+<div class="mt-2">
+    <a href="/Admin/TaxIndex" class="btn btn-danger">Back to Home Page</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

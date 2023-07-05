@@ -1,0 +1,118 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+<title></title>
+
+<div>
+    <h3>Project Management</h3>
+    <hr />
+</div>
+<div id="example">
+    <div id="detailEmployeeGrid"></div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#detailEmployeeGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        var currentUrl = window.location.href;
+                        var parts = currentUrl.split('/');
+                        var value = parts.pop();
+                        $.ajax({
+                            url: "https://localhost:5000/api/Employee/project/" + value,
+                            type: "GET",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    }
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "employeeID",
+                        fields: {
+                            employeeID: { type: "number" },
+                            employeeName: { type: "string" },
+                            address: { type: "string" },
+                            gender: { type: "string" },
+                            phoneNumber: { type: "string" },
+                            emailAddress: { type: "string" },
+                            birthDate: { type: "date" },
+                            userName: { type: "string" },
+                            employeeStatus: { type: "string" },
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "employeeID",
+                title: "ID",
+                filterable: { multi: true },
+                width: 30
+            }, {
+                field: "employeeName",
+                title: "Employee Name",
+                filterable: { multi: true },
+                width: 120,
+                template: "#= truncateString(employeeName, 30) #"
+            }, {
+                field: "address",
+                title: "Address",
+                filterable: {
+                    multi: true
+                },
+                width: 120,
+                template: "#= truncateString(address, 30) #"
+            }, {
+                field: "gender",
+                title: "Gender",
+                filterable: { multi: true },
+                width: 120
+            }, {
+                field: "phoneNumber",
+                title: "Phone",
+                filterable: { multi: true },
+                width: 120,
+            }, {
+                field: "emailAddress",
+                title: "Email",
+                filterable: { multi: true },
+                width: 120,
+            }, {
+                field: "birthDate",
+                title: "BirthDate",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}",
+                width: 120,
+            }, {
+                field: "userName",
+                title: "User Name",
+                filterable: { multi: true },
+                width: 120,
+            }]
+        });
+    });
+</script>

@@ -16,5 +16,6 @@ namespace GroupProject_HRM_Library.Repository.Interface
         public Task<List<GetLeaveLogResponse>> GetLeaveLogResponsesByStatusAsync(int? status);
         public Task<List<GetLeaveLogResponse>> GetLeaveLogResponsesByEmplIDAsync(int emplID, int? status);
         public Task<List<GetLeaveLogResponse>> GetLeaveLogResponsesByProjectIDAsync(int projectID, int? status);
+        public Task CreateLeaveLogRequestAsync(LeaveLogManagerRequest request);
     }
 }

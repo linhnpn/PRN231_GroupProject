@@ -31,8 +31,6 @@ namespace GroupProject_HRM_Library.Repository.Implement
             try
             {
                 var pro = _mapper.Map<Project>(request);
-                pro.ProjectBonus = 0;
-                pro.ProjectStatus = (int)ProjectEnum.ProjectStatus.NotStarted;
 
                 await _unitOfWork.ProjectDAO.AddNewProjectAsync(pro);
                 await _unitOfWork.CommitAsync();
@@ -64,6 +62,36 @@ namespace GroupProject_HRM_Library.Repository.Implement
 
                 _unitOfWork.ProjectDAO.DeleteProject(id);
                 await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+
+                errors.Add(error);
+                if (ex.Message.Contains("The Project with inputted ID does not exist in the System."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> GetIdProjectBaseOnManager(int id)
+        {
+            try
+            {
+                var proRequest = await _unitOfWork.ProjectDAO.GetProjectByIDByManagerAsync(id);
+
+                if (proRequest == 0)
+                    throw new NotFoundException("The Project with inputted ID does not exist in the System.");
+                return proRequest;
+
             }
             catch (Exception ex)
             {
@@ -179,6 +207,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 projectRequest.ProjectName = request.ProjectName;
                 projectRequest.ProjectDescription = request.ProjectDescription;
                 projectRequest.ProjectBonus = request.ProjectBonus;
+                projectRequest.ProjectStatus = request.ProjectStatus;
 
                 _unitOfWork.ProjectDAO.UpdateProject(projectRequest);
                 await _unitOfWork.CommitAsync();

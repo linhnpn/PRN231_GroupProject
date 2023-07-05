@@ -3,11 +3,10 @@ using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GroupProject_HRM_Api.Controllers
 {
@@ -67,9 +66,23 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
+        [HttpGet("manager/{id}"), ActionName("GetProject")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetProjectBaseManagerAsync([FromRoute] int id)
+        {
+            int projectId = await _projectRepository.GetIdProjectBaseOnManager(id);
+            GetProjectDetailResponse proResponse = await _projectRepository.GetProjectResponseAsync(projectId);
+
+            return Ok(new
+            {
+                Success = true,
+                Data = proResponse
+            });
+        }
+
         // POST api/<ProjectController>
         [HttpPost, ActionName("PostProject")]
-        public async Task<IActionResult> PostProjectAsync([FromForm] CreateProjectRequest value)
+        public async Task<IActionResult> PostProjectAsync([FromBody] CreateProjectRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +113,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // PUT api/<ProjectController>/5
         [HttpPut("{id}"), ActionName("PutProject")]
-        public async Task<IActionResult> PutProjectAsync([FromRoute] int id, [FromForm] UpdateProjectRequest value)
+        public async Task<IActionResult> PutProjectAsync([FromRoute] int id, [FromBody] UpdateProjectRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -130,10 +143,10 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         // PUT api/<ProjectController>/5
-        [HttpPut("{id}/Status"), ActionName("PutProjectStatus")]
+        [HttpPut("Status/{id}"), ActionName("PutProjectStatus")]
         public async Task<IActionResult> PutProjectStatusAsync(
             [FromRoute] int id,
-            [Required(ErrorMessage = "Project Status is required")][FromForm] ProjectEnum.ProjectStatus value)
+            [Required(ErrorMessage = "Project Status is required")][FromBody] ProjectEnum.ProjectStatus value)
         {
             if (!ModelState.IsValid)
             {

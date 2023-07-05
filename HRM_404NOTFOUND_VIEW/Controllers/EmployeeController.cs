@@ -119,6 +119,26 @@ namespace GroupProject_HRM_View.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLeaveLog(LeaveLogRequest request)
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             if (ModelState.IsValid)
             {
                 var formData = new MultipartFormDataContent();

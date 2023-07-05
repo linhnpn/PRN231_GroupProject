@@ -8,39 +8,79 @@
         font-family: Arial, Helvetica, sans-serif;
     }</style>
 
-
 <div>
     <div>
         <h3> Leave Log Request</h3>
+        <div class="mt-2">
+            <a href="/Manager/CreateLeaveLogManager" class="btn btn-info">Create new Log</a>
+        </div>
         <hr />
     </div>
     <div id="example">
         <div id="leaveLogGrid"></div>
         <div id="detailsLeaveLog"></div>
+        <div id="acceptLeaveLog"></div>
+        <div id="rejectLeaveLog"></div>
     </div>
 </div>
 
 <script type="text/x-kendo-template" id="templateDetails">
     <div id="detailsLeaveLog-container">
-        <h2>#= leaveLogID # #= leaveLogID #</h2>
-        <em>#= leaveLogID #</em>
+        <h5>Fullname: #= employee.employeeName #</h5>
         <dl>
-            <dt>City: #= leaveLogID #</dt>
-            <dt>Birth Date: #= 111 #</dt>
+            <dt>Start: #= kendo.toString(startDate, "D") #</dt>
+            <dt>End: #= kendo.toString(endDate, "D") #</dt>
         </dl>
-        <button class="btn btn-warning float-right" id="cancelButton">Cancel</button>
+        <em>Log Date: #= kendo.toString(date, "D") #</em>
+            <p>Reason: #= reason #</p>
+            # if (linkProof !== "") { #
+            File: <a href="#= linkProof #" target="_blank">Click here</a>
+        # } #
+            # if (leaveLogStatus === 1) { #
+            <p>Status: Accept</p>
+        # } else if (leaveLogStatus === -1) { #
+            <p>Status: Reject</p>
+            <p>Reject Reason: #= rejectReson #</p>
+            # } else if ((leaveLogStatus === 0)) { #
+                <p>Status: Waiting</p>
+            # } else if ((leaveLogStatus === -2)) { #
+                <p>Status: Unauthorized leave</p>
+            # } else if ((leaveLogStatus === 2)) { #
+                <p>Status: Cancel</p>
+            # } #
+        <button class="btn btn-warning float-right" id="closeButton">Close</button>
     </div>
 </script>
+
+<script type="text/x-kendo-template" id="templateAccept">
+    <div id="acceptLeaveLogs-container">
+        <h5>Do you want to accept this request?</h5>
+        <button class="btn btn-info" id="acceptLeaveLogBtn">Accept</button>
+        <button class="btn btn-warning float-right" id="closeLeaveButton">Close</button>
+    </div>
+</script>
+
+<script type="text/x-kendo-template" id="templateReject">
+    <div id="rejectLeaveLogs-container">
+        <h5>Do you want to reject this request?</h5>
+        <label class="control-label">Reason:</label>
+        <textarea id="rejectReason" class="k-textbox" style="width: 100%;" required data-role="textarea" data-required-msg="Please enter a reason for rejection." data-custom-validator="onlyLettersValidator" data-invalid-msg="Only letters are allowed"></textarea>
+        <div class="k-invalid-msg" data-for="rejectReason" style="color: red;"></div>
+        <button class="btn btn-info" id="rejectLeaveLogBtn">Accept</button>
+        <button class="btn btn-warning float-right" id="closeCancelButton">Close</button>
+    </div>
+</script>
+
 <script>
-    var wnd,
-        detailsTemplate;
+    var wnd, rjll, acll,
+        detailsTemplate, rejectTemplate, acceptTemplate;
     $(document).ready(function () {
         var grid = $("#leaveLogGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "https://localhost:5000/api/LeaveLog/employee?id=1",
+                            url: "https://localhost:5000/api/LeaveLog/project?managerId=" + sessionStorage.getItem('EMPLOYEE_ID'),
                             type: "GET",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
@@ -61,6 +101,8 @@
                         fields: {
                             leaveLogID: { type: "number" },
                             date: { type: "date" },
+                            startDate: { type: "date" },
+                            endDate: { type: "date" },
                             reason: { type: "string" },
                             rejectReson: { type: "string" },
                             leaveLogStatus: { type: "number" },
@@ -69,6 +111,21 @@
                     }
                 },
                 pageSize: 20
+            },
+            dataBound: function (e) {
+                var grid = this;
+                grid.tbody.find("tr").each(function () {
+                    var dataItem = grid.dataItem(this);
+
+                    if (dataItem.leaveLogStatus === 0) {
+                        var acceptBtn = $(this).find(".k-grid-Accept");
+                        acceptBtn.removeClass("k-disabled");
+                        acceptBtn.prop("disabled", false);
+                        var rejectBtn = $(this).find(".k-grid-Reject");
+                        rejectBtn.removeClass("k-disabled");
+                        rejectBtn.prop("disabled", false);
+                    }
+                });
             },
             height: 550,
             sortable: true,
@@ -83,14 +140,21 @@
                 title: "ID",
                 filterable: { multi: true }
             }, {
-                field: "date",
+                field: "startDate",
                 title: "Start Date",
                 filterable: { multi: true },
                 format: "{0:dd-MM-yyyy}"
 
             }, {
-                field: "date",
+                field: "endDate",
                 title: "End Date",
+                filterable: {
+                    multi: true
+                },
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "date",
+                title: "Log Date",
                 filterable: {
                     multi: true
                 },
@@ -99,23 +163,30 @@
                 field: "reason",
                 title: "Reason",
                 filterable: { multi: true },
-            },
-            {
+            }, {
                 field: "rejectReson",
                 title: "Reject Reason",
-                filterable: { multi: true }
+                filterable: { multi: true },
+                template: function (dataItem) {
+                    if (dataItem.rejectReson != '' && dataItem.rejectReson != null) return dataItem.rejectReson;
+                    return "-";
+                },
             }, {
                 field: "leaveLogStatus",
                 title: "Status",
+                width: "150",
                 filterable: { multi: true },
                 template: function (dataItem) {
-                    if (dataItem.leaveLogStatus == 0) return "Cancel";
+                    if (dataItem.leaveLogStatus == 0) return "Waiting";
                     if (dataItem.leaveLogStatus == 1) return "Approve";
                     if (dataItem.leaveLogStatus == -1) return "Reject";
+                    if (dataItem.leaveLogStatus == -2) return "Unauthorized leave";
+                    if (dataItem.leaveLogStatus == 2) return "Cancel";
                     return "-";
                 }
             },
-            { command: { text: "Cancel Log", click: cancelLeaveLog }, title: " ", width: "150" },
+            { command: { text: "Accept", click: acceptLeaveLog, className: "k-disabled" }, title: " ", width: "80" },
+            { command: { text: "Reject", click: rejectLeaveLog, className: "k-disabled" }, title: " ", width: "80" },
             { command: { text: "View Detail", click: showDetails }, title: " ", width: "150" }
             ]
         }).data("kendoGrid");
@@ -128,11 +199,109 @@
                 width: 300
             }).data("kendoWindow");
 
+        rjll = $("#rejectLeaveLog")
+            .kendoWindow({
+                title: "Reject Leave Log",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 400
+            }).data("kendoWindow");
+
+        acll = $("#acceptLeaveLog")
+            .kendoWindow({
+                title: "Accept Leave Log",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 400
+            }).data("kendoWindow");
+
         detailsTemplate = kendo.template($("#templateDetails").html());
+        rejectTemplate = kendo.template($("#templateReject").html());
+        acceptTemplate = kendo.template($("#templateAccept").html());
     });
-    function cancelLeaveLog(e) {
+    function acceptLeaveLog(e) {
         e.preventDefault();
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        acll.content(acceptTemplate(dataItem));
+        $("#closeLeaveButton").on("click", function () {
+            acll.close();
+        });
+
+        $("#acceptLeaveLogBtn").on("click", function () {
+            acceptLeaveLogApi(dataItem.leaveLogID);
+            acll.close();
+        });
+
+        acll.center().open();
+    }
+
+    function rejectLeaveLog(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        rjll.content(rejectTemplate(dataItem));
+        $("#closeCancelButton").on("click", function () {
+            rjll.close();
+        });
+
+        $("#rejectLeaveLogBtn").on("click", function () {
+            var rejectReasonInput = $("#rejectReason");
+            var rejectReason = rejectReasonInput.val();
+
+            if (!onlyLettersValidator(rejectReasonInput)) {
+                var errorMsgElement = rejectReasonInput.next(".k-invalid-msg");
+                errorMsgElement.text("This field is required and only letters are allowed").show();
+                return;
+            }
+            rejectLeaveLogApi(dataItem.leaveLogID, rejectReason);
+            rjll.close();
+        });
+
+        rjll.center().open();
+    }
+
+    function rejectLeaveLogApi(id, reason) {
+        $.ajax({
+            url: "https://localhost:5000/api/LeaveLog/reject/" + id,
+            type: "PUT",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            data: JSON.stringify({
+                leaveLogID: id,
+                rejectReson: reason
+            }),
+            contentType: "application/json",
+            success: function (result) {
+                var grid = $("#leaveLogGrid").data("kendoGrid");
+                grid.dataSource.read();
+                grid.refresh();
+                demo.showNotification(result['data'], 1);
+            },
+            error: function (result) {
+                demo.showNotification("An Error Occur", 4);
+            }
+        });
+    }
+
+    function acceptLeaveLogApi(id) {
+        $.ajax({
+            url: "https://localhost:5000/api/LeaveLog/status/" + id + "?status=1",
+            type: "PUT",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            success: function (result) {
+                var grid = $("#leaveLogGrid").data("kendoGrid");
+                grid.dataSource.read();
+                grid.refresh();
+                demo.showNotification(result['data'], 1);
+            },
+            error: function (result) {
+                demo.showNotification("An Error Occur", 4);
+            }
+        });
     }
 
     function showDetails(e) {
@@ -145,6 +314,20 @@
             wnd.close();
         });
 
+        $("#closeButton").on("click", function () {
+            wnd.close();
+        });
+
         wnd.center().open();
+    }
+
+    function onlyLettersValidator(input) {
+        if (input.is("[data-custom-validator=onlyLettersValidator]")) {
+            var value = input.val();
+            if (value == null || value == '' || !/^[a-zA-Z ]+$/.test(value)) {
+                return false;
+            }
+        }
+        return true;
     }
 </script>

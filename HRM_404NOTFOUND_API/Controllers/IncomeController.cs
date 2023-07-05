@@ -62,5 +62,17 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = "Created income successfully."
             });
         }
+
+        [HttpPost("all"), ActionName("Post Income")]
+        public async Task<IActionResult> PostIncomeAllAsync()
+        {
+
+            await this._incomeRepository.CreateIncomeAsync();
+            return Ok(new
+            {
+                Success = true,
+                Data = "Created income successfully."
+            });
+        }
     }
 }

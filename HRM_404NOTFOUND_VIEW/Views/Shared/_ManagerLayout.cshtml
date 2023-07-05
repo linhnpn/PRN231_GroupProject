@@ -50,6 +50,18 @@
                             <p>Overtime Management</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Manager/EmployeeIndex">
+                            <i class="nc-icon nc-notes"></i>
+                            <p>Employee Project</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Manager/Income">
+                            <i class="nc-icon nc-notes"></i>
+                            <p>Your Income</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -184,6 +196,15 @@
     <script src="~/assets/js/demo.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
+<script>
+    function truncateString(value, maxLength) {
+        if (value && value.length > maxLength) {
+            return value.substring(0, maxLength) + "...";
+        }
+        return value;
+    }
+</script>
 
 <script>
     function logout() {

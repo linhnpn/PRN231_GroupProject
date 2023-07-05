@@ -1,4 +1,5 @@
-﻿using GroupProject_HRM_Library.Models;
+﻿using GroupProject_HRM_Library.Enums;
+using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,31 @@ namespace GroupProject_HRM_Library.DAO
         {
             _dbContext = dbContext;
         }
+
+        public async Task<int> GetProjectByIDByManagerAsync(int managerId)
+        {
+            try
+            {
+                var projectId = await _dbContext.Projects
+                    .Where(p => _dbContext.EmployeeProjects
+                        .Any(ep => ep.ProjectID == p.ProjectID
+                            && (ep.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress)
+                            && ep.EmployeeID == managerId))
+                    .Select(p => p.ProjectID)
+                    .FirstOrDefaultAsync();
+
+                if (projectId == 0)
+                {
+                    throw new Exception($"The Project with inputted ID does not exist in the System.");
+                }
+                return projectId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<List<Project>> GetProjectsAsync()
         {
             try

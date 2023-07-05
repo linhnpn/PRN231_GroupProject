@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+
 namespace GroupProject_HRM_Library.Models
 {
     public class Employee
@@ -13,6 +14,8 @@ namespace GroupProject_HRM_Library.Models
         public string? PhoneNumber { get; set; }
         public string? EmailAddress { get; set; }
         public DateTime BirthDate { get; set; }
+        public DateTime JoinDate { get; set; } = DateTime.Now;
+        public DateTime StartDate { get; set; } = DateTime.Now;
         public string? UserName { get; set; }
         public string? Password { get; set; }
         public int EmployeeStatus { get; set; }

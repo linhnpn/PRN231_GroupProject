@@ -28,8 +28,8 @@
     <div id="detailsLeaveLog-container">
         <h5>Fullname: #= employee.employeeName #</h5>
         <dl>
-            <dt>Start: #= kendo.toString(date, "D") #</dt>
-            <dt>End: #= kendo.toString(date, "D") #</dt>
+            <dt>Start: #= kendo.toString(startDate, "D") #</dt>
+            <dt>End: #= kendo.toString(endDate, "D") #</dt>
         </dl>
         <em>Log Date: #= kendo.toString(date, "D") #</em>
             <p>Reason: #= reason #</p>
@@ -87,6 +87,8 @@
                         id: "leaveLogID",
                         fields: {
                             leaveLogID: { type: "number" },
+                            startDate: { type: "date" },
+                            endDate: { type: "date" },
                             date: { type: "date" },
                             reason: { type: "string" },
                             rejectReson: { type: "string" },
@@ -122,14 +124,21 @@
                 title: "ID",
                 filterable: { multi: true }
             }, {
-                field: "date",
+                field: "startDate",
                 title: "Start Date",
                 filterable: { multi: true },
                 format: "{0:dd-MM-yyyy}"
 
             }, {
-                field: "date",
+                field: "endDate",
                 title: "End Date",
+                filterable: {
+                    multi: true
+                },
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "date",
+                title: "Log Date",
                 filterable: {
                     multi: true
                 },
@@ -142,10 +151,15 @@
             {
                 field: "rejectReson",
                 title: "Reject Reason",
-                filterable: { multi: true }
+                filterable: { multi: true },
+                template: function (dataItem) {
+                    if (dataItem.rejectReson == '' || dataItem.rejectReson == null) return "-";
+                    return dataItem.rejectReson;
+                }
             }, {
                 field: "leaveLogStatus",
                 title: "Status",
+                width: "150",
                 filterable: { multi: true },
                 template: function (dataItem) {
                     if (dataItem.leaveLogStatus == 0) return "Waiting";
@@ -239,10 +253,10 @@
                 var grid = $("#leaveLogGrid").data("kendoGrid");
                 grid.dataSource.read();
                 grid.refresh();
-                demo.showNotification();
+                demo.showNotification(result['data'], 1);
             },
             error: function (result) {
-                demo.showNotification();
+                demo.showNotification("An Error Occur", 4);
             }
         });
     }

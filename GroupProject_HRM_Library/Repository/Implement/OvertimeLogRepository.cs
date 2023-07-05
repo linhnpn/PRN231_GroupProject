@@ -40,7 +40,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 }
 
                 OvertimeLog overtimeLog = _mapper.Map<OvertimeLog>(request);
-                overtimeLog.OverTimeDate = DateTime.Now;
+                overtimeLog.LogDate = DateTime.Now;
 
                 overtimeLog.OvertimeLogStatus = (int)OvertimeLogEnum.Status.WAITING;
                 await _unitOfWork.OvertimeLogDAO.CreateOvertimeLogAsync(overtimeLog);

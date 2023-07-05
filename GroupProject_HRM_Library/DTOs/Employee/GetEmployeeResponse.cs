@@ -19,5 +19,7 @@ namespace GroupProject_HRM_Library.DTOs.Employee
         public string UserName { get; set; }
         public string Password { get; set; }
         public int EmployeeStatus { get; set; }
+        public DateTime JoinDate { get; set; } = DateTime.Now;
+        public DateTime StartDate { get; set; } = DateTime.Now;
     }
 }

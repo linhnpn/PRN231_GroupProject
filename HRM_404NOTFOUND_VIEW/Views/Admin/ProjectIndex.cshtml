@@ -14,11 +14,11 @@
     <hr />
 </div>
 <div id="example">
-    <div id="incomeGrid"></div>
+    <div id="projectGrid"></div>
 </div>
 <script>
     $(document).ready(function () {
-        $("#incomeGrid").kendoGrid({
+        $("#projectGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
@@ -33,56 +33,234 @@
                             },
                             error: function (result) {
                                 options.error(result);
+                                demo.showNotification("An error has occurred in the system, please contact the administrator.", 4);
+                            }
+                        });
+                    },
+                    destroy: function (options) {
+                        var newData = options.data;
+                        $.ajax({
+                            url: "https://localhost:5000/api/Project/" + newData.projectID,
+                            type: "DELETE",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
+                            success: function (result) {
+                                options.success(result);
+                                var grid = $("#projectGrid").data("kendoGrid");
+                                grid.dataSource.read();
+                                grid.refresh();
+                                demo.showNotification(result['data'], 1);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                                demo.showNotification("An error has occurred in the system, please contact the administrator.", 4);
+                            }
+                        });
+                    },
+                    update: function (options) {
+                        var newData = options.data;
+                        $.ajax({
+                            url: "https://localhost:5000/api/Project/" + newData.projectID,
+                            type: "PUT",
+                            data: JSON.stringify(newData),
+                            contentType: "application/json",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
+                            success: function (result) {
+                                options.success(result);
+                                var grid = $("#projectGrid").data("kendoGrid");
+                                grid.dataSource.read();
+                                grid.refresh();
+                                demo.showNotification(result['data'], 1);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                                demo.showNotification("An error has occurred in the system, please contact the administrator.", 4);
+                            }
+                        });
+                    },
+                    create: function (options) {
+                        var newData = options.data;
+                        $.ajax({
+                            url: "https://localhost:5000/api/Project",
+                            type: "POST",
+                            data: JSON.stringify(newData),
+                            contentType: "application/json",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
+                            success: function (result) {
+                                options.success(result);
+                                var grid = $("#projectGrid").data("kendoGrid");
+                                grid.dataSource.read();
+                                grid.refresh();
+                                demo.showNotification(result['data'], 1);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                                demo.showNotification("An error has occurred in the system, please contact the administrator.", 4);
                             }
                         });
                     }
+
                 },
                 schema: {
                     data: "data",
                     model: {
                         id: "projectID",
                         fields: {
-                            projectID: { type: "number" },
-                            projectName: { type: "string" },
-                            projectStatus: { type: "string" },
-                            projectParticipations: { type: "number" },
-                            projectBonus: { type: "number" }
+                            projectID: {
+                                editable: false, nullable: true, type: "number", validation: {
+                                    required: false
+                                },
+                            },
+                            projectDescription: {
+                                type: "string",
+                                validation: {
+                                    required: true,
+                                    projectDescriptionvalidation: function (input) {
+                                        if (input.is("[name='projectDescription']") && input.val() != "") {
+                                            input.attr("data-projectdescriptionvalidation-msg", "Project Description should include only letter");
+                                            return /^[a-zA-Z ]+$/.test(input.val());
+                                        }
+                                        return true;
+                                    }
+                                },
+                            },
+                            projectName: {
+                                type: "string",
+                                validation: {
+                                    required: true,
+                                    projectNamevalidation: function (input) {
+                                        if (input.is("[name='projectName']") && input.val() != "") {
+                                            input.attr("data-projectnamevalidation-msg", "Project Name should include only letter");
+                                            return /^[a-zA-Z ]+$/.test(input.val());
+                                        }
+
+                                        return true;
+                                    }
+                                }
+                            },
+                            projectStatus: {
+                                type: "int",
+                                validation: {
+                                    required: true,
+                                }
+                            },
+                            projectParticipations: {
+                                editable: false, nullable: true, type: "number", validation: {
+                                    required: false
+                                },
+                            },
+                            projectBonus: { type: "number", validation: { required: true } }
                         }
                     }
                 },
                 pageSize: 20
             },
             height: 550,
+            toolbar: ["create"],
             sortable: true,
             filterable: true,
+            editable: {
+                mode: "popup",
+                window: {
+                    title: "Add/Edit Project",
+                    animation: true
+                }
+            },
             pageable: {
                 refresh: true,
                 pageSizes: true,
                 buttonCount: 5
             },
-            columns: [{
-                field: "projectID",
-                title: "ID",
-                filterable: { multi: true }
-            }, {
-                field: "projectName",
-                title: "Project Name",
-                filterable: { multi: true }
-            }, {
-                field: "projectStatus",
-                title: "Status",
-                filterable: {
-                    multi: true }
-            }, {
-                field: "projectParticipations",
-                title: "Project Participations",
-                filterable: { multi: true },
-            },
-            {
-                field: "projectBonus",
-                title: "Bonus",
-                filterable: { multi: true }
-            }]
+            columns: [
+                {
+                    field: "projectID",
+                    title: "ID",
+                    filterable: { multi: true }
+                },
+                {
+                    field: "projectName",
+                    title: "Project Name",
+                    filterable: { multi: true }
+                },
+                {
+                    field: "projectDescription",
+                    title: "Project Description",
+                    hidden: true,
+                    editor: function (container, options) {
+                        var textarea = $('<textarea class="k-textbox" cols="53" name="' + options.field + '"></textarea>')
+                        textarea.val(options.model[options.field]);
+                        container.append(textarea);
+                    }
+                },
+                {
+                    field: "projectStatus",
+                    title: "Status",
+                    filterable: {
+                        multi: true,
+                    },
+                    template: function (dataItem) {
+                        if (dataItem.projectStatus == 3) return "Cancelled";
+                        if (dataItem.projectStatus == 2) return "Done";
+                        if (dataItem.projectStatus == 1) return "In-Progress";
+                        if (dataItem.projectStatus == 0) return "NotStarted";
+                        return "-";
+                    },
+                    editor: function (container, options) {
+                        $('<input required data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDropDownList({
+                                dataSource: [
+                                    { text: "Canceled", value: "3" },
+                                    { text: "Done", value: "2" },
+                                    { text: "In-Progress", value: "1" },
+                                    { text: "Not Start", value: "0" }
+                                ],
+                                optionLabel: "--Select--"
+                            });
+                    }
+                },
+                {
+                    field: "projectParticipations",
+                    title: "Project Participations",
+                    filterable: { multi: true },
+                },
+                {
+                    field: "projectBonus",
+                    title: "Bonus",
+                    format: "{0:c}",
+                    filterable: { multi: true }
+                },
+                {
+                    command:
+                        { text: "Detail", click: showDetails },
+                    title: " ",
+                    width: "80"
+                },
+                {
+                    command: ["edit", "destroy"],
+                    title: "&nbsp;",
+                    width: "180px"
+                }]
         });
     });
+
+    function showDetails(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.location.pathname = "/Admin/DetailProjectIndex/" + dataItem.projectID;
+    }
+
+    function validateName(input) {
+        if (input.is("[name='projectName']")) {
+            var value = input.val();
+            input.attr("data-productnamevalidation-msg", "Project Name should start with capital letter");
+            return !/^[a-zA-Z ]+$/.test(value);
+        }
+        return true;
+    }
 </script>

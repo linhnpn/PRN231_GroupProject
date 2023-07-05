@@ -151,7 +151,7 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await this._dbContext.Taxes.Where(t => t.TaxStatus == status).ToListAsync();
+                return await this._dbContext.Taxes.Where(t => t.TaxStatus == status).OrderBy(x => x.SalaryMin).ToListAsync();
             }
             catch (Exception ex)
             {

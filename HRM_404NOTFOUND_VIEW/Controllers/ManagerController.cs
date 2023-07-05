@@ -36,7 +36,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -62,7 +62,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -99,7 +99,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -136,7 +136,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -198,7 +198,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -243,7 +243,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -268,7 +268,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -293,7 +293,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -318,7 +318,7 @@ namespace GroupProject_HRM_View.Controllers
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
-                else if (role == Constants.Constants.EMPLOYEE_URL)
+                else if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }

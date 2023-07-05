@@ -26,16 +26,76 @@ namespace GroupProject_HRM_View.Controllers
         }
         public IActionResult TaxIndex()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
         public IActionResult CreateTax()
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTax(CreateTaxRequest request)
         {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
             if (ModelState.IsValid)
             {
                 string strData = System.Text.Json.JsonSerializer.Serialize(request);
@@ -60,7 +120,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -85,7 +145,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -110,7 +170,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }

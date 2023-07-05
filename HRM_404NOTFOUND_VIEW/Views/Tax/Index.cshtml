@@ -1,0 +1,158 @@
+﻿@{
+    ViewData["Title"] = "Tax";
+}
+<style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }</style>
+<title></title>
+
+
+<div id="example">
+    <div class="mt-2">
+        <a href="/Tax/CreateTax" class="btn btn-info">Create new Tax</a>
+    </div>
+    <div id="taxGrid"></div>
+</div>
+<script>
+    
+    $(document).ready(function () {
+        $("#taxGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        $.ajax({
+                            url: "https://localhost:5000/api/Tax",
+                            type: "GET",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    },
+                    destroy: function (options) {
+                        var taxIDToDelete = options.data.taxID;
+                        $.ajax({
+                            url: "https://localhost:5000/api/Tax/"+ taxIDToDelete,
+                        type: "DELETE",
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                        });
+                    },
+                    update: function (options){
+                        var taxIDToUpdate = options.data.taxID; 
+    
+                        $.ajax({
+                            url: "https://localhost:5000/api/Tax/" + taxIDToUpdate,
+                            type: "PUT", // Use the appropriate HTTP method for updating (e.g., PUT or PATCH)
+                            data: options.data, // Include the updated data in the request body
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                            });
+                    },
+                    create: function (options){
+                        var newData = options.data; // Assuming the new data is included in the options.data object
+
+                        $.ajax({
+                            url: "https://localhost:5000/api/Tax",
+                            type: "POST", // Use the appropriate HTTP method for creating
+                            data: newData, // Send the new data in the request payload
+                            success: function (result) {
+                                options.success(result);
+                            },
+                            error: function (result) {
+                                options.error(result);
+                            }
+                            });
+                    }
+                    
+                },
+                schema: {
+                    data: "data",
+                    model: {
+                        id: "taxID",
+                        fields: {
+                            taxID: { type: "number" },
+                            salaryMin: { type: "number" },
+                            salaryMax: { type: "number" },
+                            percent: { type: "number" },
+                            timestamp: { type: "date" },
+                            taxStatus: { type: "string" }
+
+                        }
+                    }
+                },
+                pageSize: 20
+            },
+            height: 550,
+            groupable: true,
+            sortable: true,
+            filterable: true,
+            editable: {
+                mode: "popup",
+                window: {
+                        title: "Update Tax",
+                        animation: false
+                    }
+            },
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [
+            {
+                field: "salaryMin",
+                title: "Salary Min",
+                filterable: { multi: true }
+
+            }, {
+                field: "timestamp",
+                title: "Date",
+                filterable: {
+                    multi: true
+                },
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "salaryMax",
+                title: "Salary Max",
+                filterable: { multi: true }
+
+            }, {
+                field: "percent",
+                title: "Percent",
+                filterable: { multi: true },
+                format: "{0:p0}"
+            },
+            {
+                field: "taxStatus",
+                title: "Status",
+                filterable: { multi: true }
+
+            },
+            { command: ["edit", "destroy"], 
+                title: "&nbsp;",
+                width: "250px" 
+            }],
+            edit: function(e) {
+                if (e.model.taxStatus) {
+                    e.container.find("input[name=taxStatus]").prop("disabled", true);
+                }
+                if (e.model.timestamp) {
+                    e.container.find("input[name=timestamp]").prop("disabled", true);
+                }
+            }
+        });
+    });
+</script>

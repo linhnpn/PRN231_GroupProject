@@ -45,7 +45,7 @@ namespace GroupProject_HRM_Api.Controllers
             [FromQuery] TaxEnum.TaxStatus? status = null,
             [FromQuery] TaxEnum.TaxOrderBy? orderBy = null)
         {
-            List<GetTaxResponse> taxResponses = 
+            List<GetTaxResponse> taxResponses =
                 await _taxRepository.GetTaxResponsesSortedAsync(
                     minSalary,
                     maxSalary,
@@ -63,7 +63,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // GET api/<TaxController>/5
         [HttpGet("{id}"), ActionName("GetTax")]
-        public async Task<IActionResult> GetTaxAsync([FromRoute]int id)
+        public async Task<IActionResult> GetTaxAsync([FromRoute] int id)
         {
             GetTaxResponse taxResponse = await _taxRepository.GetTaxResponseAsync(id);
 
@@ -76,9 +76,9 @@ namespace GroupProject_HRM_Api.Controllers
 
         // POST api/<TaxController>
         [HttpPost, ActionName("PostTax")]
-        public async Task<IActionResult> PostTaxAsync([FromForm] CreateTaxRequest value)
+        public async Task<IActionResult> PostTaxAsync([FromBody] CreateTaxRequest value)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var errors = new List<ErrorDetail>();
                 foreach (var pair in ModelState)
@@ -107,7 +107,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // PUT api/<TaxController>/5
         [HttpPut("{id}"), ActionName("PutTax")]
-        public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromForm] UpdateTaxRequest value)
+        public async Task<IActionResult> PutTaxAsync([FromRoute] int id, [FromForm] UpdateTaxRequest value)
         {
             if (!ModelState.IsValid)
             {
@@ -128,7 +128,7 @@ namespace GroupProject_HRM_Api.Controllers
                 var message = JsonConvert.SerializeObject(errors);
                 throw new BadRequestException(message);
             }
-            await _taxRepository.UpdateTaxRequestAsync(id,value);
+            await _taxRepository.UpdateTaxRequestAsync(id, value);
             return Ok(new
             {
                 Success = true,
@@ -139,7 +139,7 @@ namespace GroupProject_HRM_Api.Controllers
         // PUT api/<TaxController>/5
         [HttpPut("{id}/Status"), ActionName("PutTaxStatus")]
         public async Task<IActionResult> PutTaxStatusAsync(
-            [FromRoute] int id, 
+            [FromRoute] int id,
             [Required(ErrorMessage = "Tax Status is required")][FromForm] TaxEnum.TaxStatus value)
         {
             if (!ModelState.IsValid)
@@ -171,7 +171,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // DELETE api/<TaxController>/5
         [HttpDelete("{id}"), ActionName("DeleteTax")]
-        public async Task<IActionResult> DeleteTaxAsync([FromRoute]int id)
+        public async Task<IActionResult> DeleteTaxAsync([FromRoute] int id)
         {
             await _taxRepository.DeleteTaxRequestAsync(id);
             return Ok(new

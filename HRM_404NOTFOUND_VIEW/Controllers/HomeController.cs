@@ -22,7 +22,7 @@ namespace HRM_404NOTFOUND_VIEW.Controllers
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
-            client.BaseAddress = new Uri("https://localhost:7284");
+            client.BaseAddress = new Uri("https://localhost:5000");
             AuthenAPI_URL = "/api/Auth";
         }
 

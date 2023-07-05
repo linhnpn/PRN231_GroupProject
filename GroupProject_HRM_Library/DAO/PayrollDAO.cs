@@ -11,13 +11,10 @@ namespace GroupProject_HRM_Library.DAO
             _dbContext = dbContext;
         }
 
-
-
-        public async Task<Payroll> GetPayrollByEmpID(int id)
-        {
+        public async Task CreateNewPayroll(Payroll payroll) {
             try
             {
-                return await this._dbContext.Payrolls.FirstOrDefaultAsync(x => x.EmployeeID == id);
+                await this._dbContext.Payrolls.AddAsync(payroll);
             }
             catch (Exception ex)
             {
@@ -25,5 +22,28 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
+        public async Task<Payroll> GetPayrollByEmpID(int id)
+        {
+            try
+            {
+                return await this._dbContext.Payrolls.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync(x => x.EmployeeID == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Payroll>> GetPayrollResponsesByEmplIDAsync(int? imployeeID)
+        {
+            try
+            {
+                return await this._dbContext.Payrolls.Where(x => x.EmployeeID == imployeeID).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

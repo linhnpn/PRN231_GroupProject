@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Cloud.Storage.V1;
 using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_Library.DTOs.Income;
@@ -63,11 +64,37 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
+        public async Task<List<GetEmployeeResponse>> GetListEmployeeResponseAsync(int projectId)
+        {
+            try
+            {
+                List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetEmployeesByProjectIDAsync(projectId);
+                return this._mapper.Map<List<GetEmployeeResponse>>(employees);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameAsync(int projectId)
         {
             try
             {
                 List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetEmployeeByProjectIDAsync(projectId);
+                return this._mapper.Map<List<GetListEmployeeResponseIDandName>>(employees);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseNoPayRollAsync()
+        {
+            try
+            {
+                List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetAllEmployeeNoPayRollAsync();
                 return this._mapper.Map<List<GetListEmployeeResponseIDandName>>(employees);
             }
             catch (Exception ex)

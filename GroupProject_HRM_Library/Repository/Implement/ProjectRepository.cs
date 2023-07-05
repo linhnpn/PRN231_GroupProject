@@ -31,8 +31,6 @@ namespace GroupProject_HRM_Library.Repository.Implement
             try
             {
                 var pro = _mapper.Map<Project>(request);
-                pro.ProjectBonus = 0;
-                pro.ProjectStatus = (int)ProjectEnum.ProjectStatus.NotStarted;
 
                 await _unitOfWork.ProjectDAO.AddNewProjectAsync(pro);
                 await _unitOfWork.CommitAsync();
@@ -209,6 +207,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 projectRequest.ProjectName = request.ProjectName;
                 projectRequest.ProjectDescription = request.ProjectDescription;
                 projectRequest.ProjectBonus = request.ProjectBonus;
+                projectRequest.ProjectStatus = request.ProjectStatus;
 
                 _unitOfWork.ProjectDAO.UpdateProject(projectRequest);
                 await _unitOfWork.CommitAsync();

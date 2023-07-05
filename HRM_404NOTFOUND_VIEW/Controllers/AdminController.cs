@@ -1,4 +1,5 @@
-﻿using GroupProject_HRM_View.Models.Employee;
+﻿using GroupProject_HRM_Library.DTOs.Tax;
+using GroupProject_HRM_View.Models.Employee;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -10,6 +11,7 @@ namespace GroupProject_HRM_View.Controllers
         private readonly HttpClient client = null;
         private string LeaveLogApiUrl = "";
         private string EmployeeApiUrl = "";
+        private readonly string TaxAPIUrl = "";
 
         public AdminController()
         {
@@ -18,6 +20,36 @@ namespace GroupProject_HRM_View.Controllers
             client.DefaultRequestHeaders.Accept.Add(contentType);
             LeaveLogApiUrl = "https://localhost:5000/api/LeaveLog";
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
+            TaxAPIUrl = "https://localhost:5000/api/Tax";
+        }
+        public IActionResult TaxIndex()
+        {
+            return View();
+        }
+        public IActionResult CreateTax()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTax(CreateTaxRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                string strData = System.Text.Json.JsonSerializer.Serialize(request);
+                var contentData = new StringContent(strData, System.Text.Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(TaxAPIUrl, contentData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Message"] = "Insert successfully!";
+                }
+                else
+                {
+                    TempData["Message"] = "Error while calling WebAPI!";
+                }
+            }
+            return Redirect("./TaxIndex");
         }
         public IActionResult ProjectIndex()
         {

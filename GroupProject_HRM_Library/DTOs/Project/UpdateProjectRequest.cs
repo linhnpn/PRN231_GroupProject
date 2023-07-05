@@ -20,9 +20,9 @@ namespace GroupProject_HRM_Library.DTOs.Project
         [DataType(DataType.MultilineText)]
         [StringLength(1000, ErrorMessage = "Project Name must have length from {2} to {1} characters", MinimumLength = 1)]
         public string? ProjectDescription { get; set; }
-        /*[Required(ErrorMessage = "Project Status is required")]
+        [Required(ErrorMessage = "Project Status is required")]
         [DisplayName("Project Status")]
-        public ProjectEnum.ProjectStatus ProjectStatus { get; set; }*/
+        public int ProjectStatus { get; set; }
         [Required(ErrorMessage = "Project Bonus is required")]
         [DisplayName("Project Bonus")]
         [Range(0, 999999999999999999.99, ErrorMessage = "Project Bonus range from {2} to {1} dolars.")]

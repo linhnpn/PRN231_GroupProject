@@ -48,6 +48,18 @@ namespace GroupProject_HRM_Library.Models
 
             modelBuilder.Entity<Employee>(entity =>
             {
+                entity.HasIndex(e => e.UserName)
+                .IsUnique();
+
+                entity.HasIndex(e => e.PhoneNumber)
+                .IsUnique();
+
+                entity.HasIndex(e => e.EmailAddress)
+                .IsUnique();
+
+                entity.HasIndex(e => e.UserName)
+                .IsUnique();
+
                 entity.HasKey(e => e.EmployeeID);
 
                 entity.HasOne(e => e.Role)

@@ -4,31 +4,29 @@ using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-#nullable disable
 
 namespace GroupProject_HRM_Library.Migrations
 {
     [DbContext(typeof(HumanResourceManagementContext))]
-    partial class HumanResourceManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20230705100434_UpdateDb433945423")]
+    partial class UpdateDb433945423
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.19")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("ProductVersion", "5.0.17")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("GroupProject_HRM_Library.Models.Bonus", b =>
                 {
                     b.Property<int>("BonusID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BonusID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("BonusValue")
                         .HasColumnType("decimal(18,2)");
@@ -53,9 +51,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("EmployeeID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -64,7 +61,7 @@ namespace GroupProject_HRM_Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailAddress")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmployeeImage")
                         .HasColumnType("nvarchar(max)");
@@ -85,7 +82,7 @@ namespace GroupProject_HRM_Library.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleID")
                         .HasColumnType("int");
@@ -94,23 +91,11 @@ namespace GroupProject_HRM_Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EmployeeID");
 
-                    b.HasIndex("EmailAddress")
-                        .IsUnique()
-                        .HasFilter("[EmailAddress] IS NOT NULL");
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique()
-                        .HasFilter("[PhoneNumber] IS NOT NULL");
-
                     b.HasIndex("RoleID");
-
-                    b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
@@ -143,9 +128,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("IncomeID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncomeID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("AfterRentIncome")
                         .HasColumnType("decimal(18,2)");
@@ -173,9 +157,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("LeaveLogID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveLogID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -212,9 +195,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("NotificationID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("EmployeeID")
                         .HasColumnType("int");
@@ -239,9 +221,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("OvertimeID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OvertimeID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -272,9 +253,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("PayrollID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PayrollID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("EmployeeID")
                         .HasColumnType("int");
@@ -296,9 +276,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("ProjectID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<decimal>("ProjectBonus")
                         .HasColumnType("decimal(18,2)");
@@ -321,9 +300,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("RoleID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("RoleName")
                         .IsRequired()
@@ -338,9 +316,8 @@ namespace GroupProject_HRM_Library.Migrations
                 {
                     b.Property<int>("TaxID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaxID"), 1L, 1);
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<double>("Percent")
                         .HasColumnType("float");

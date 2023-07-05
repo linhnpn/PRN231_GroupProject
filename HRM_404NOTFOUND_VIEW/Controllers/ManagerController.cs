@@ -256,6 +256,57 @@ namespace GroupProject_HRM_View.Controllers
 
             return View();
         }
+
+        public IActionResult EmployeeIndex()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.EMPLOYEE_URL)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+            return View();
+        }
+
+        public IActionResult Income()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.ADMIN)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.EMPLOYEE_URL)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+            return View();
+        }
+
         public async Task<IActionResult> Profile()
         {
             string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");

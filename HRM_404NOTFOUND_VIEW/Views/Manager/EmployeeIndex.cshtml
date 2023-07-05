@@ -7,40 +7,51 @@
         font-size: 14px;
         font-family: Arial, Helvetica, sans-serif;
     }</style>
-
+<title></title>
 
 <div>
-    <div>
-        <h3> Leave Log Request</h3>
-        <hr />
-    </div>
-    <div id="example">
-        <div id="leaveLogGrid"></div>
-        <div id="detailsLeaveLog"></div>
-    </div>
+    <h3>Project Management</h3>
+    <hr />
+</div>
+<div id="example">
+    <div id="detailEmployeeGrid"></div>
+    <div id="bonusEmployee"></div>
 </div>
 
-<script type="text/x-kendo-template" id="templateDetails">
-    <div id="detailsLeaveLog-container">
-        <h2>#= leaveLogID # #= leaveLogID #</h2>
-        <em>#= leaveLogID #</em>
-        <dl>
-            <dt>City: #= leaveLogID #</dt>
-            <dt>Birth Date: #= 111 #</dt>
-        </dl>
-        <button class="btn btn-warning float-right" id="cancelButton">Cancel</button>
+<script type="text/x-kendo-template" id="templateBonus">
+        <div id="rejectLeaveLogs-container">
+
+        <label class="control-label">Current Bonus of the Project:</label>
+        <input id="currentBonus" readonly type="number" class="k-textbox" />
+
+        <label class="control-label">Description:</label>
+        <textarea id="descriptionInput" class="k-textbox" style="width: 100%;" required data-role="textarea"
+            data-required-msg="Please enter a reason for rejection." data-custom-validator="onlyLettersValidator"
+            data-invalid-msg="Only letters are allowed"></textarea>
+        <div class="k-invalid-msg" data-for="descriptionInput" style="color: red;"></div>
+
+        <label class="control-label">Bonus:</label>
+        <input id="bonusInput" oninput="checkValueBonus" class="k-textbox" type="number" min="10000"
+            required data-role="numerictextbox" data-required-msg="Please enter a number greater than 10000."
+            data-custom-validator="bonusValidator"
+            data-invalid-msg="Please enter a valid number greater than 10,000.">
+        <div class="k-invalid-msg" data-for="bonusInput" style="color: red;"></div>
+
+        <button class="btn btn-info" id="AddBonusBtn">Confirm</button>
+        <button class="btn btn-warning float-right" id="closeBtn">Close</button>
     </div>
 </script>
+
 <script>
     var wnd,
-        detailsTemplate;
+        bonusTemplate;
     $(document).ready(function () {
-        var grid = $("#leaveLogGrid").kendoGrid({
+        $("#detailEmployeeGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
                         $.ajax({
-                            url: "https://localhost:5000/api/LeaveLog/employee?id=1",
+                            url: "https://localhost:5000/api/Employee/manager-all/" + sessionStorage.getItem('EMPLOYEE_ID'),
                             type: "GET",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
@@ -57,14 +68,17 @@
                 schema: {
                     data: "data",
                     model: {
-                        id: "leaveLogID",
+                        id: "employeeID",
                         fields: {
-                            leaveLogID: { type: "number" },
-                            date: { type: "date" },
-                            reason: { type: "string" },
-                            rejectReson: { type: "string" },
-                            leaveLogStatus: { type: "number" },
-                            linkProof: { type: "string" }
+                            employeeID: { type: "number" },
+                            employeeName: { type: "string" },
+                            address: { type: "string" },
+                            gender: { type: "string" },
+                            phoneNumber: { type: "string" },
+                            emailAddress: { type: "string" },
+                            birthDate: { type: "date" },
+                            userName: { type: "string" },
+                            employeeStatus: { type: "string" },
                         }
                     }
                 },
@@ -79,72 +93,161 @@
                 buttonCount: 5
             },
             columns: [{
-                field: "leaveLogID",
+                field: "employeeID",
                 title: "ID",
-                filterable: { multi: true }
-            }, {
-                field: "date",
-                title: "Start Date",
                 filterable: { multi: true },
-                format: "{0:dd-MM-yyyy}"
-
             }, {
-                field: "date",
-                title: "End Date",
+                field: "employeeName",
+                title: "Employee Name",
+                filterable: { multi: true },
+                width: 120,
+                template: "#= truncateString(employeeName, 30) #"
+            }, {
+                field: "address",
+                title: "Address",
                 filterable: {
                     multi: true
                 },
-                format: "{0:dd-MM-yyyy}"
+                width: 120,
+                template: "#= truncateString(address, 30) #"
             }, {
-                field: "reason",
-                title: "Reason",
+                field: "gender",
+                title: "Gender",
                 filterable: { multi: true },
-            },
-            {
-                field: "rejectReson",
-                title: "Reject Reason",
-                filterable: { multi: true }
+                width: 120
             }, {
-                field: "leaveLogStatus",
-                title: "Status",
+                field: "phoneNumber",
+                title: "Phone",
                 filterable: { multi: true },
-                template: function (dataItem) {
-                    if (dataItem.leaveLogStatus == 0) return "Cancel";
-                    if (dataItem.leaveLogStatus == 1) return "Approve";
-                    if (dataItem.leaveLogStatus == -1) return "Reject";
-                    return "-";
-                }
-            },
-            { command: { text: "Cancel Log", click: cancelLeaveLog }, title: " ", width: "150" },
-            { command: { text: "View Detail", click: showDetails }, title: " ", width: "150" }
-            ]
-        }).data("kendoGrid");
-        wnd = $("#detailsLeaveLog")
+                width: 120,
+            }, {
+                field: "emailAddress",
+                title: "Email",
+                filterable: { multi: true },
+                width: 120,
+            }, {
+                field: "birthDate",
+                title: "BirthDate",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}",
+                width: 120,
+            }, {
+                field: "userName",
+                title: "User Name",
+                filterable: { multi: true },
+                width: 120,
+            }, { command: { text: "Add Bonus", click: addBonusDialog }, title: " ", width: "80" },]
+        });
+        wnd = $("#bonusEmployee")
             .kendoWindow({
-                title: "Leave Log Details",
+                title: "Add Bonus For Employee",
                 modal: true,
                 visible: false,
                 resizable: false,
-                width: 300
+                width: 400
             }).data("kendoWindow");
-
-        detailsTemplate = kendo.template($("#templateDetails").html());
+        bonusTemplate = kendo.template($("#templateBonus").html());
     });
-    function cancelLeaveLog(e) {
+
+    function addBonusDialog(e) {
         e.preventDefault();
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-    }
+        wnd.content(bonusTemplate(dataItem));
+        getProjectApi();
+        $("#closeBtn").on("click", function () {
+            wnd.close();
+        });
 
-    function showDetails(e) {
-        e.preventDefault();
+        $("#AddBonusBtn").on("click", function () {
+            var descriptionInput = $("#descriptionInput");
+            var description = descriptionInput.val();
+            if (!onlyLettersValidator(descriptionInput)) {
+                var errorMsgElement = descriptionInput.next(".k-invalid-msg");
+                errorMsgElement.text("This field is required and only letters are allowed").show();
+                return;
+            }
 
-        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-        wnd.content(detailsTemplate(dataItem));
+            var bonusInput = $("#bonusInput");
+            var bonusValue = bonusInput.val();
+            if (!onlyLettersValidator(bonusInput)) {
+                var errorMsgElement = bonusInput.next(".k-invalid-msg");
+                errorMsgElement.text("This field is required and greater than 10 000").show();
+                return;
+            }
 
-        $("#cancelButton").on("click", function () {
+            addBonusApi(dataItem.employeeID, description, bonusValue);
             wnd.close();
         });
 
         wnd.center().open();
+    }
+
+    function addBonusApi(id, reason, bonusValue) {
+        $.ajax({
+            url: "https://localhost:5000/api/Bonus",
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            data: JSON.stringify({
+                description: reason,
+                bonusValue: bonusValue,
+                employeeID: id
+            }),
+            contentType: "application/json",
+            success: function (result) {
+                demo.showNotification(result['data'], 1);
+            },
+            error: function (result) {
+                demo.showNotification("An error has occurred in the system, please contact the administrator.", 4);
+            }
+        });
+    }
+
+    function getProjectApi() {
+        $.ajax({
+            url: "https://localhost:5000/api/Project/manager/" + sessionStorage.getItem('EMPLOYEE_ID'),
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            success: function (result) {
+                $("#currentBonus").val(JSON.parse(result['data'].projectBonus));
+            },
+            error: function (result) {
+            }
+        });
+    }
+
+    function onlyLettersValidator(input) {
+        if (input.is("[data-custom-validator=onlyLettersValidator]")) {
+            var value = input.val();
+            if (value == null || value == '' || !/^[a-zA-Z ]+$/.test(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function bonusValidator(input) {
+        if (input.is("[data-custom-validator=bonusValidator]")) {
+            var value = input.val();
+            console.log('bonusValidator');
+            if (value == null || value < 10000) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checkValueBonus(input) {
+        console.log('checkValueBonus');
+        if (input.is("[data-custom-validator=bonusValidator]")) {
+            var value = input.val();
+            if (value == null || value < 10000) {
+                return false;
+            }
+        }
+        return true;
     }
 </script>

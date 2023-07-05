@@ -1,5 +1,4 @@
 ﻿using GroupProject_HRM_Library.DTOs.Employee;
-using GroupProject_HRM_Library.Repository.Implement;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +33,43 @@ namespace GroupProject_HRM_Api.Controllers
         {
             int projectId = await _projectRepository.GetIdProjectBaseOnManager(id);
             List<GetListEmployeeResponseIDandName> getListEmployeeResponses = await this._employeeRepository.GetListEmployeeResponseIDandNameAsync(projectId);
+            return Ok(new
+            {
+                Success = true,
+                Data = getListEmployeeResponses
+            });
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("manager-all/{id}"), ActionName("Get Employee Of A Project")]
+        public async Task<IActionResult> GetListEmplResponseBaseManagerAsync([FromRoute] int id)
+        {
+            int projectId = await _projectRepository.GetIdProjectBaseOnManager(id);
+            var getListEmployeeResponses = await this._employeeRepository.GetListEmployeeResponseAsync(projectId);
+            return Ok(new
+            {
+                Success = true,
+                Data = getListEmployeeResponses
+            });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("project/{id}"), ActionName("Get Employee Of A Project")]
+        public async Task<IActionResult> GetListEmplResponseBaseProjectAsync([FromRoute] int id)
+        {
+            var getListEmployeeResponses = await this._employeeRepository.GetListEmployeeResponseAsync(id);
+            return Ok(new
+            {
+                Success = true,
+                Data = getListEmployeeResponses
+            });
+        }
+
+        [HttpGet("no-payroll"), ActionName("Get Employee No Payroll")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetListEmplNoPayrollrAsync()
+        {
+            List<GetListEmployeeResponseIDandName> getListEmployeeResponses = await this._employeeRepository.GetListEmployeeResponseNoPayRollAsync();
             return Ok(new
             {
                 Success = true,

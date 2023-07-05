@@ -14,7 +14,7 @@ namespace GroupProject_HRM_Library.DTOs.Project
         public int ProjectID { get; set; }
         public string? ProjectName { get; set; }
         public string? ProjectDescription { get; set; }
-        public ProjectEnum.ProjectStatus ProjectStatus { get; set; }
+        public int ProjectStatus { get; set; }
         public int ProjectParticipations { get; set; }
         public decimal ProjectBonus { get; set; }
     }

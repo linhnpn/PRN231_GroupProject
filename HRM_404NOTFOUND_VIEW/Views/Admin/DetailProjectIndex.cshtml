@@ -14,16 +14,19 @@
     <hr />
 </div>
 <div id="example">
-    <div id="incomeGrid"></div>
+    <div id="detailEmployeeGrid"></div>
 </div>
 <script>
     $(document).ready(function () {
-        $("#incomeGrid").kendoGrid({
+        $("#detailEmployeeGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: function (options) {
+                        var currentUrl = window.location.href;
+                        var parts = currentUrl.split('/');
+                        var value = parts.pop();
                         $.ajax({
-                            url: "https://localhost:5000/api/Project",
+                            url: "https://localhost:5000/api/Employee/project/" + value,
                             type: "GET",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
@@ -40,13 +43,17 @@
                 schema: {
                     data: "data",
                     model: {
-                        id: "projectID",
+                        id: "employeeID",
                         fields: {
-                            projectID: { type: "number" },
-                            projectName: { type: "string" },
-                            projectStatus: { type: "string" },
-                            projectParticipations: { type: "number" },
-                            projectBonus: { type: "number" }
+                            employeeID: { type: "number" },
+                            employeeName: { type: "string" },
+                            address: { type: "string" },
+                            gender: { type: "string" },
+                            phoneNumber: { type: "string" },
+                            emailAddress: { type: "string" },
+                            birthDate: { type: "date" },
+                            userName: { type: "string" },
+                            employeeStatus: { type: "string" },
                         }
                     }
                 },
@@ -61,40 +68,51 @@
                 buttonCount: 5
             },
             columns: [{
-                field: "projectID",
+                field: "employeeID",
                 title: "ID",
-                filterable: { multi: true }
+                filterable: { multi: true },
+                width: 30
             }, {
-                field: "projectName",
-                title: "Project Name",
-                filterable: { multi: true }
+                field: "employeeName",
+                title: "Employee Name",
+                filterable: { multi: true },
+                width: 120,
+                template: "#= truncateString(employeeName, 30) #"
             }, {
-                field: "projectStatus",
-                title: "Status",
+                field: "address",
+                title: "Address",
                 filterable: {
                     multi: true
-                }
+                },
+                width: 120,
+                template: "#= truncateString(address, 30) #"
             }, {
-                field: "projectParticipations",
-                title: "Project Participations",
+                field: "gender",
+                title: "Gender",
                 filterable: { multi: true },
+                width: 120
             }, {
-                field: "projectBonus",
-                title: "Bonus",
-                filterable: { multi: true }
-            },
-            {
-                command:
-                    { text: "Detail", click: showDetails },
-                title: " ",
-                width: "80"
+                field: "phoneNumber",
+                title: "Phone",
+                filterable: { multi: true },
+                width: 120,
+            }, {
+                field: "emailAddress",
+                title: "Email",
+                filterable: { multi: true },
+                width: 120,
+            }, {
+                field: "birthDate",
+                title: "BirthDate",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}",
+                width: 120,
+            }, {
+                field: "userName",
+                title: "User Name",
+                filterable: { multi: true },
+                width: 120,
             }]
         });
     });
-
-    function showDetails(e) {
-        e.preventDefault();
-        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-        window.location.pathname = "Admin/Project/" + dataItem.projectID;
-    }
 </script>

@@ -21,5 +21,7 @@ namespace GroupProject_HRM_Library.DTOs.Project
         [DataType(DataType.MultilineText)]
         [StringLength(1000, ErrorMessage = "Project Name must have length from {2} to {1} characters", MinimumLength = 1)]
         public string? ProjectDescription { get; set; }
+        public int ProjectStatus { get; set; }
+        public decimal ProjectBonus { get; set; }
     }
 }

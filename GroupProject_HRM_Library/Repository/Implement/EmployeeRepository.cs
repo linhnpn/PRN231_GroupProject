@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
+using GroupProject_HRM_Library.DTOs.Income;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Infrastructure;
@@ -58,6 +59,19 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new UnauthorizedException(JsonConvert.SerializeObject(errors));
                 }
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameAsync(int projectId)
+        {
+            try
+            {
+                List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetEmployeeByProjectIDAsync(projectId);
+                return this._mapper.Map<List<GetListEmployeeResponseIDandName>>(employees);
+            }
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
         }

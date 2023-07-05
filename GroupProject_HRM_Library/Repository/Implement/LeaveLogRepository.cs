@@ -66,6 +66,47 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
+        public async Task CreateLeaveLogRequestAsync(LeaveLogManagerRequest request)
+        {
+            try
+            {
+                Employee employee = await _unitOfWork.EmployeeDAO.GetEmployeeByIDAsync(request.EmployeeID);
+                if (employee == null)
+                {
+                    throw new BadRequestException("The employee does not exist in the system.");
+                }
+
+                LeaveLog leaveLog = _mapper.Map<LeaveLog>(request);
+                leaveLog.Date = DateTime.Now;
+
+                if (request.File != null)
+                {
+                    leaveLog.LinkProof = await _firebaseStorageService.UploadFile(request.File);
+                }
+
+                await _unitOfWork.LeaveLogDAO.CreateLeaveLogAsync(leaveLog);
+                await _unitOfWork.CommitAsync();
+
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+
+                errors.Add(error);
+                if (ex.Message.Contains("The employee does not exist in the system."))
+                {
+                    throw new BadRequestException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<GetLeaveLogResponse> GetLeaveLogAsync(int id)
         {
             try
@@ -144,14 +185,8 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new Exception("The leave log does not exist in the system.");
                 }
-                leaveLog.Reason = request.Reason;
-                leaveLog.LeaveLogStatus = request.LeaveLogStatus;
+                leaveLog.LeaveLogStatus = (int)LeaveLogEnum.Status.REJECT;
                 leaveLog.RejectReson = request.RejectReson;
-                if (request.File != null)
-                {
-                    leaveLog.LinkProof = await _firebaseStorageService.UploadFile(request.File);
-                }
-
 
                 this._unitOfWork.LeaveLogDAO.UpdateLeaveLogRequestAsync(leaveLog);
                 await this._unitOfWork.CommitAsync();

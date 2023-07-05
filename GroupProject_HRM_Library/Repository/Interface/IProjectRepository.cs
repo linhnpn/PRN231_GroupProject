@@ -13,6 +13,7 @@ namespace GroupProject_HRM_Library.Repository.Interface
         public Task CreateProjectRequestAsync(CreateProjectRequest request);
         public Task UpdateProjectRequestAsync(int id, UpdateProjectRequest request);
         public Task UpdateProjectStatusRequestAsync(int id, ProjectEnum.ProjectStatus status);
+        public Task<int> GetIdProjectBaseOnManager(int id);
         public Task<GetProjectDetailResponse> GetProjectResponseAsync(int id);
         public Task<List<GetProjectResponse>> GetProjectResponsesAsync();
         public Task<List<GetProjectResponse>> GetProjectResponsesSortedAsync(

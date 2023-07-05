@@ -1,7 +1,10 @@
-﻿using GroupProject_HRM_Library.DTOs.LeaveLog;
+﻿using GroupProject_HRM_Library.DTOs.Authenticate;
+using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
+using GroupProject_HRM_Library.Models;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -12,13 +15,16 @@ namespace GroupProject_HRM_Api.Controllers
     public class LeaveLogController : ControllerBase
     {
         private ILeaveLogRepository _leavelogRepository;
+        private IProjectRepository _projectRepository;
 
-        public LeaveLogController(ILeaveLogRepository leaveLogRepository)
+        public LeaveLogController(ILeaveLogRepository leaveLogRepository, IProjectRepository projectRepository)
         {
             this._leavelogRepository = leaveLogRepository;
+            this._projectRepository = projectRepository;
         }
 
         [HttpPost, ActionName("Post LeaveLog")]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> PostLeaveLogAsync([FromForm] LeaveLogRequest request)
         {
             if (!ModelState.IsValid)
@@ -50,6 +56,39 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
+        [HttpPost("manager"), ActionName("Post LeaveLog")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> PostLeaveLogManagerAsync([FromForm] LeaveLogManagerRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = new List<ErrorDetail>();
+                foreach (var pair in ModelState)
+                {
+                    if (pair.Value.Errors.Count > 0)
+                    {
+                        ErrorDetail errorDetail = new ErrorDetail()
+                        {
+                            FieldNameError = pair.Key,
+                            DescriptionError = pair.Value.Errors.Select(error => error.ErrorMessage).ToList()
+                        };
+                        errors.Add(errorDetail);
+                    }
+                }
+
+                var message = JsonConvert.SerializeObject(errors);
+                throw new BadRequestException(message);
+
+            }
+
+            await this._leavelogRepository.CreateLeaveLogRequestAsync(request);
+            return Ok(new
+            {
+                Success = true,
+                Data = "Created flower bouquet successfully."
+            });
+        }
+        [Authorize]
         [HttpGet("{id}"), ActionName("Get LeaveLog")]
         public async Task<IActionResult> GetLeaveLogByIDAsync([FromRoute] int id)
         {
@@ -60,9 +99,9 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = leaveLogResponse
             });
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLeaveLogAsync([FromRoute] int id, [FromForm] UpdateLeaveLogRequest updateLeaveLogRequest)
+        [Authorize(Roles = "Manager")]
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> PutLeaveLogAsync([FromRoute] int id, [FromBody] UpdateLeaveLogRequest updateLeaveLogRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -87,11 +126,12 @@ namespace GroupProject_HRM_Api.Controllers
             return Ok(new
             {
                 Success = true,
-                Data = "Updated leave log successfully."
+                Data = "Reject leave log successfully."
             });
         }
 
         [HttpPut("status/{id}")]
+        [Authorize]
         public async Task<IActionResult> PutStatusLeaveLogAsync([FromRoute] int id, [FromQuery] int status)
         {
             if (!ModelState.IsValid)
@@ -122,6 +162,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet("employee"), ActionName("GetLeaveLogByEmplIDs")]
+        [Authorize]
         public async Task<IActionResult> GetLeaveLogsAsync([FromQuery] int id, [FromQuery] int? status)
         {
             List<GetLeaveLogResponse> leaveLogResponses = await this._leavelogRepository.GetLeaveLogResponsesByEmplIDAsync(id, status);
@@ -133,8 +174,10 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet("project"), ActionName("GetLeaveLogByEmplIDs")]
-        public async Task<IActionResult> GetLeaveLogByProjectIDsAsync([FromQuery] int projectId, [FromQuery] int? status)
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetLeaveLogByManagerIDsAsync([FromQuery] int managerId, [FromQuery] int? status)
         {
+            int projectId = await _projectRepository.GetIdProjectBaseOnManager(managerId);
             List<GetLeaveLogResponse> leaveLogResponses = await this._leavelogRepository.GetLeaveLogResponsesByProjectIDAsync(projectId, status);
             return Ok(new
             {
@@ -144,7 +187,8 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet, ActionName("GetLeaveLogByStatuses")]
-        public async Task<IActionResult> GetLeaveLogByProjectIDsAsync([FromQuery] int? status)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetLeaveLogByProjectIDsAsync([FromQuery] int projectId, [FromQuery] int? status)
         {
             List<GetLeaveLogResponse> leaveLogResponses = await this._leavelogRepository.GetLeaveLogResponsesByStatusAsync(status);
             return Ok(new

@@ -84,6 +84,36 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
+        public async Task<int> GetIdProjectBaseOnManager(int id)
+        {
+            try
+            {
+                var proRequest = await _unitOfWork.ProjectDAO.GetProjectByIDByManagerAsync(id);
+
+                if (proRequest == 0)
+                    throw new NotFoundException("The Project with inputted ID does not exist in the System.");
+                return proRequest;
+
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+
+                errors.Add(error);
+                if (ex.Message.Contains("The Project with inputted ID does not exist in the System."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<GetProjectDetailResponse> GetProjectResponseAsync(int id)
         {
             try

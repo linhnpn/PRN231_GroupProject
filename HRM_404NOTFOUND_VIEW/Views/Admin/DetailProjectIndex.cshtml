@@ -83,10 +83,11 @@
                 title: "Bonus",
                 filterable: { multi: true }
             },
-            { command: 
-                { text: "Detail", click: showDetails }, 
-                title: " ", 
-                width: "80" 
+            {
+                command:
+                    { text: "Detail", click: showDetails },
+                title: " ",
+                width: "80"
             }]
         });
     });
@@ -94,6 +95,6 @@
     function showDetails(e) {
         e.preventDefault();
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-        window.location.pathname = "/Admin/DetailProjectIndex/" + dataItem.projectID;
+        window.location.pathname = "Admin/Project/" + dataItem.projectID;
     }
 </script>

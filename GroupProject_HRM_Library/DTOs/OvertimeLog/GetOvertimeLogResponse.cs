@@ -11,6 +11,7 @@ namespace GroupProject_HRM_Library.DTOs.OvertimeLog
     {
         public int OvertimeID { get; set; }
         public DateTime OverTimeDate { get; set; }
+        public DateTime LogDate { get; set; }
         public int Hours { get; set; }
         public int OvertimeLogStatus { get; set; }
         public string Description { get; set; }

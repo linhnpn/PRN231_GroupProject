@@ -12,10 +12,12 @@ namespace GroupProject_HRM_Api.Controllers
     public class OvertimeLogController : ControllerBase
     {
         private IOvertimeLogRepository _overtimeLogRepository;
+        private IProjectRepository _projectRepository;
 
-        public OvertimeLogController(IOvertimeLogRepository leaveLogRepository)
+        public OvertimeLogController(IOvertimeLogRepository leaveLogRepository, IProjectRepository projectRepository)
         {
             this._overtimeLogRepository = leaveLogRepository;
+            _projectRepository = projectRepository;
         }
 
         [HttpPost, ActionName("Post OvertimeLog")]
@@ -132,9 +134,10 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        [HttpGet("project"), ActionName("GetOvertimeLogByEmplIDs")]
-        public async Task<IActionResult> GetOvertimeLogByProjectIDsAsync([FromQuery] int projectId, [FromQuery] int? status)
+        [HttpGet("mangager"), ActionName("GetOvertimeLogByEmplIDs")]
+        public async Task<IActionResult> GetOvertimeLogByProjectIDsAsync([FromQuery] int managerId, [FromQuery] int? status)
         {
+            int projectId = await _projectRepository.GetIdProjectBaseOnManager(managerId);
             List<GetOvertimeLogResponse> leaveLogResponses = await this._overtimeLogRepository.GetOvertimeLogResponsesByProjectIDAsync(projectId, status);
             return Ok(new
             {

@@ -63,5 +63,24 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<List<Employee>> GetEmployeeByProjectIDAsync(int projectId)
+        {
+            try
+            {
+                var result = await _dbContext.Employees
+                        .Include(x => x.EmployeeProjects)
+                            .ThenInclude(ep => ep.Project)
+                            .Where(x => x.EmployeeProjects.Any(p => p.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress) 
+                            && x.EmployeeProjects.Any(p => p.Project.ProjectID == projectId) 
+                            && x.RoleID == (int)RoleEnum.Role.EMPLOYEE)
+                            .ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

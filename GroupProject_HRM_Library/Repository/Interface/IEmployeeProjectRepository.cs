@@ -14,5 +14,7 @@ namespace GroupProject_HRM_Library.Repository.Interface
         public Task UpdateEmployeeProjectRequestAsync(UpdateEmployeeProjectRequest request);
         public Task DeleteEmployeeProjectRequestAsync(int employeeID, int projectID);
         public Task<EmployeeProject> AssignEmployeeToProject(AssignEmployeeToProjectRequest assignRequest);
+
+        public Task<List<EmployeeProject>> GetInforOfProjects(int projectID);
     }
 }

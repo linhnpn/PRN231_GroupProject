@@ -232,5 +232,30 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<List<Employee>> GetALLEmployeeNotStart()
+        {
+            try
+            {
+                var employee = await this._unitOfWork.EmployeeDAO.GetAllEmployeeNotStart();
+                if (employee.Count == 0) throw new NotFoundException("There are currently no employees not starting.");
+                return employee;
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                if (ex.Message.Contains("There are currently no employees not starting."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                errors.Add(error);
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

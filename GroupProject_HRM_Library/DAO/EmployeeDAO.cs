@@ -271,5 +271,22 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<List<Employee>> GetAllEmployeeNotStart()
+        {
+            try
+            {
+                return _dbContext.Employees
+                    .Include(e => e.EmployeeProjects)
+                    .Where(e => e.RoleID != (int)EmployeeRole.Admin 
+                            && e.EmployeeProjects
+                                    .Where(e => e.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress).ToList().Count == 0
+                            && e.EmployeeStatus == (int)EmployeeStatus.Active)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

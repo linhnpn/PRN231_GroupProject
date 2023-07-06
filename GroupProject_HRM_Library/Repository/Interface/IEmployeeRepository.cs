@@ -26,5 +26,6 @@ namespace GroupProject_HRM_Library.Repository.Interface
 
         public Task<List<Employee>> GetAllEmployee();
         public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameNotInAnyProjectAsync();
+        public Task<List<Employee>> GetALLEmployeeNotStart();
     }
 }

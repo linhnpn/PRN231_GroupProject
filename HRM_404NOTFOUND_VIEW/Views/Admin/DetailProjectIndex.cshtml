@@ -14,6 +14,9 @@
     <hr />
 </div>
 <div id="example">
+    <div class="mt-2">      
+            <a href="/Admin/AssignEmployee"  class="btn btn-info">Assign Employee</a>
+        </div>
     <div id="detailEmployeeGrid"></div>
 </div>
 <script>
@@ -144,6 +147,7 @@
                             startDateEmployeeProject: { type: "date" },
                             endDateEmployeeProject: { type: "date" },
                             statusEmployeeProject: { type: "int" },
+                            roleId: {type: "int"},
                         }
                     }
                 },
@@ -245,7 +249,17 @@
                                 optionLabel: "--Select--"
                             });
                     }
-                },
+                }, {
+                    field: "roleId",
+                    title: "Role",
+                    filterable: { multi: true },
+                    width: 100,
+                    template: function (dataItem) {
+                        if (dataItem.roleId == 1) return "Employee";
+                        if (dataItem.roleId == 3) return "Manager";
+                        return "-";
+                    },
+                }
             ]
         });
     });

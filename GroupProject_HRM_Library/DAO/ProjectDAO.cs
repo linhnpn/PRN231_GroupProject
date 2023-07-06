@@ -185,5 +185,18 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<List<Project>> GetAllProjectCanAssignEmployee()
+        {
+            try
+            {
+                var existProject = _dbContext.Projects.Where(p => p.ProjectStatus == (int)ProjectEnum.ProjectStatus.InProgress).ToList();
+                return existProject;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

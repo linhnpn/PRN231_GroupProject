@@ -26,5 +26,6 @@ namespace GroupProject_HRM_Library.DTOs.Employee
         public DateTime EndDateEmployeeProject { get; set; }
         public int StatusEmployeeProject { get; set; }
         public int IdOfProjectCurrent { get; set; }
+        public int RoleId { get; set; }
     }
 }

@@ -95,7 +95,8 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = "Deleted Employee of a Project Successfully!"
             });
         }
-        [HttpPut]
+
+        [HttpPost("AssignEmployee")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignEmployeeToProject(AssignEmployeeToProjectRequest assignRequest)
         {
@@ -106,5 +107,19 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = employeeProject.Result
             });
         }
+
+
+        [HttpGet("{projectID}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetInforOfProject(int projectID)
+        {
+            var employeeProject = _employeeProjectRepository.GetInforOfProjects(projectID);
+            return Ok(new
+            {
+                Success = true,
+                Data = employeeProject.Result
+            });
+        }
+
     }
 }

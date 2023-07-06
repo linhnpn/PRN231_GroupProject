@@ -82,6 +82,36 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
         }
 
+        public async Task<List<Project>> GetAllProjectCanAssignEmployee()
+        {
+            try
+            {
+                var projects = await _unitOfWork.ProjectDAO.GetAllProjectCanAssignEmployee();
+                if(projects.Count == 0)
+                {
+                    throw new NotFoundException("No projects currently need employees");
+                }
+                return projects;
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+
+                errors.Add(error);
+                if (ex.Message.Contains("The Project with inputted ID does not exist in the System."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<int> GetIdProjectBaseOnManager(int id)
         {
             try

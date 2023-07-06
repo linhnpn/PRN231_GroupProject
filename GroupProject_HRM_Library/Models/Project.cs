@@ -11,6 +11,7 @@ namespace GroupProject_HRM_Library.Models
         public string? ProjectDescription { get; set; }
         public int ProjectStatus { get; set; }
         public decimal ProjectBonus { get; set; } = 0;
+        [System.Text.Json.Serialization.JsonIgnore]
         public virtual ICollection<EmployeeProject>? EmployeeProjects { get; set; }
     }
 }

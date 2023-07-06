@@ -1,5 +1,6 @@
 ﻿using GroupProject_HRM_Library.DTOs.Project;
 using GroupProject_HRM_Library.Enums;
+using GroupProject_HRM_Library.Models;
 
 namespace GroupProject_HRM_Library.Repository.Interface
 {
@@ -17,5 +18,7 @@ namespace GroupProject_HRM_Library.Repository.Interface
             ProjectEnum.ProjectStatus? status = null,
             ProjectEnum.ProjectOrderBy? orderBy = null);
         public Task DeleteProjectRequestAsync(int id);
+
+        public Task<List<Project>> GetAllProjectCanAssignEmployee();
     }
 }

@@ -138,5 +138,17 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = result.Result
             });
         }
+
+        [HttpGet("NotStart")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetALLEmployeeNotStart()
+        {
+            var result = _employeeRepository.GetALLEmployeeNotStart();
+            return Ok(new
+            {
+                Success = true,
+                Data = result.Result
+            });
+        }
     }
 }

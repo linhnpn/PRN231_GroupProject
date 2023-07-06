@@ -186,5 +186,17 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = "Deleted Project Successfully!"
             });
         }
+
+        [HttpGet("CanAssign")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllProjectCanAssignEmployee()
+        {
+            var projects = await _projectRepository.GetAllProjectCanAssignEmployee();
+            return Ok(new
+            {
+                Success = true,
+                Data = projects
+            });
+        }
     }
 }

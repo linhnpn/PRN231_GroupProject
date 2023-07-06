@@ -1,0 +1,64 @@
+﻿@model GroupProject_HRM_Library.DTOs.EmployeeProject.AssignEmployeeToProjectRequest
+
+@{
+    ViewData["Title"] = "AssignEmployee";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    Dictionary<int, string> listProject = ViewBag.ListProject;
+    Dictionary<int, string> listEmployee = ViewBag.ListEmployee;
+}
+
+<h1>Assign Employee</h1>
+
+<hr />
+
+@{
+    if(ViewBag.Error != null)
+    {
+        <span  class="text-danger">@ViewBag.Error</span>
+    }
+    else{
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="AssignEmployee">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label>Project</label>
+                        <select asp-for="ProjectId" class ="form-control">
+                            @foreach (var d in listProject)
+                            {
+                                <option value="@d.Key">@d.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Employee</label>
+                        <select asp-for="EmployeeId" class ="form-control">
+                            @foreach (var d in listEmployee)
+                            {
+                                <option value="@d.Key">@d.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndDate" class="control-label"></label>
+                        <input asp-for="EndDate" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+}
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using GroupProject_HRM_View.Models.Project;
+using GroupProject_HRM_Library.DTOs.EmployeeProject;
 
 namespace GroupProject_HRM_View.Controllers
 {
@@ -19,6 +21,7 @@ namespace GroupProject_HRM_View.Controllers
         private string EmployeeApiUrl = "";
         private readonly string TaxAPIUrl = "";
         private readonly string ProjectApiUrl = "";
+        private string EmployeeProjectApipUrl = "";
 
         public AdminController()
         {
@@ -29,6 +32,7 @@ namespace GroupProject_HRM_View.Controllers
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
             TaxAPIUrl = "https://localhost:5000/api/Tax";
             ProjectApiUrl = "https://localhost:5000/api/Project";
+            EmployeeProjectApipUrl = "https://localhost:5000/api/EmployeeProject";
         }
         public IActionResult TaxIndex()
         {
@@ -433,6 +437,84 @@ namespace GroupProject_HRM_View.Controllers
             string strData = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return RedirectToAction("EmployeeManagement");
+        }
+
+
+        public async Task<IActionResult> AssignEmployee()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE_URL)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+            HttpResponseMessage response = await client.GetAsync(EmployeeApiUrl + $"/NotStart");
+            string strData = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var dataEmployees = JsonSerializer.Deserialize<GetEmployeesNotStartResponseApi>(strData, options);
+
+            response = await client.GetAsync(ProjectApiUrl + $"/CanAssign");
+            strData = await response.Content.ReadAsStringAsync();
+            var dataProject = JsonSerializer.Deserialize<GetProjectCanAssignReponseApi>(strData, options);
+            if(!dataProject.Success || !dataEmployees.Success)
+            {
+                ViewBag.Error = "Currently can't assign employee.";
+            }
+            Dictionary<int, string> employeeDictionary = dataEmployees.Data.ToDictionary(c => c.EmployeeID, c => c.UserName);
+
+            Dictionary<int, string> projectDictionary = dataProject.Data.ToDictionary(c => c.ProjectID, c => c.ProjectName);
+
+            ViewBag.ListEmployee = employeeDictionary;
+            ViewBag.ListProject = projectDictionary;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignEmployee(AssignEmployeeToProjectRequest assignRequest)
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE_URL)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(assignRequest), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(EmployeeProjectApipUrl + "/AssignEmployee", jsonContent);
+            string strData = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            return RedirectToAction("DetailProjectIndex", new { id = assignRequest.ProjectId});
         }
 
     }

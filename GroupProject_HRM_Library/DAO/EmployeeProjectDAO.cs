@@ -149,6 +149,21 @@ namespace GroupProject_HRM_Library.DAO
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<List<EmployeeProject>> GetInforOfProjects(int projectId)
+        {
+            try
+            {
+                return _dbContext.EmployeeProjects
+                    .Include(p => p.Employee)
+                    .Include(x => x.Project)
+                    .Where(p => p.ProjectID == projectId).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
     }
 }

@@ -199,5 +199,36 @@ namespace GroupProject_HRM_Library.Repository.Implement
             }
             
         }
+
+        public async Task<List<EmployeeProject>> GetInforOfProjects(int projectID)
+        {
+            try
+            {
+                var result = await this._unitOfWork.EmployeeProjectDAO.GetInforOfProjects(projectID);
+                if(result.Count == 0)
+                {
+                    throw new NotFoundException("This Project doesn't have employee.");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                errors.Add(error);
+                if (ex.Message.Contains("This employee is working on a project.") ||
+                    ex.Message.Contains("Invalid employeeId."))
+                {
+                    throw new BadRequestException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+
+            }
+        }
     }
 }

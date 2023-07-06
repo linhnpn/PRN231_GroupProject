@@ -22,6 +22,58 @@
     <link href="~/assets/css/light-bootstrap-dashboard.css?v=2.0.0 " rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link href="~/assets/css/demo.css" rel="stylesheet" />
+    <style>
+        /* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+                for details on configuring this project to bundle and minify static web assets. */
+
+        a.navbar-brand {
+            white-space: normal;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        a {
+            color: #0077cc;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #1b6ec2;
+            border-color: #1861ac;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            color: #fff;
+            background-color: #1b6ec2;
+            border-color: #1861ac;
+        }
+
+        .border-top {
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .box-shadow {
+            box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        }
+
+        button.accept-policy {
+            font-size: 1rem;
+            line-height: inherit;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            white-space: nowrap;
+            line-height: 60px;
+        }
+
+    </style>
 
 </head>
 <body>
@@ -94,15 +146,9 @@
                                    class="dropdown-toggle nav-link"
                                    data-toggle="dropdown">
                                     <i class="nc-icon nc-planet"></i>
-                                    <span class="notification">5</span>
                                     <span class="d-lg-none">Notification</span>
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Notification 1</a>
-                                    <a class="dropdown-item" href="#">Notification 2</a>
-                                    <a class="dropdown-item" href="#">Notification 3</a>
-                                    <a class="dropdown-item" href="#">Notification 4</a>
-                                    <a class="dropdown-item" href="#">Another notification</a>
+                                <ul id="NotificaitonMenu" class="dropdown-menu">
                                 </ul>
                             </li>
                         </ul>
@@ -205,7 +251,6 @@
         return value;
     }
 </script>
-
 <script>
     function logout() {
         sessionStorage.clear();
@@ -256,6 +301,34 @@
         $navItems.removeClass('active');
 
         $navItems.find('a[href="' + currentUrl + '"]').parent().addClass('active');
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        ShowAllNotification();
+
+        function ShowAllNotification() {
+            $("#NotificaitonMenu").html("");
+            $.ajax({
+                url: "https://localhost:5000/api/Notification/" + sessionStorage.getItem('EMPLOYEE_ID'),
+                type: "get",
+                contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                },
+                success: function (result, status, xhr) {
+                    $.each(result["data"], function (index, value) {
+                        console.log(value.notificationDetail);
+                        var newNotification = $("<a>").addClass("dropdown-item").attr("href", "#").text(value["notificationDetail"]);
+                        $("#NotificaitonMenu").append(newNotification);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr);
+                },
+            });
+        }
     });
 </script>
 </html>

@@ -24,7 +24,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<Notification> GetNotiEmplAsync(int id)
+        public async Task<List<Notification>> GetNotiEmplAsync(int id)
         {
             try
             {

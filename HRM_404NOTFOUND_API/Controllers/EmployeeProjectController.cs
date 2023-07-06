@@ -4,6 +4,7 @@ using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -54,7 +55,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         // PUT api/<TaxController>/5
-        [HttpPut, ActionName("PutTax")]
+        [HttpPut("update-empl"), ActionName("PutTax")]
         public async Task<IActionResult> PutTaxAsync([FromBody] UpdateEmployeeProjectRequest value)
         {
             if (!ModelState.IsValid)
@@ -98,7 +99,7 @@ namespace GroupProject_HRM_Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignEmployeeToProject(AssignEmployeeToProjectRequest assignRequest)
         {
-            var employeeProject = employeeProjectRepository.AssignEmployeeToProject(assignRequest);
+            var employeeProject = _employeeProjectRepository.AssignEmployeeToProject(assignRequest);
             return Ok(new
             {
                 Success = true,

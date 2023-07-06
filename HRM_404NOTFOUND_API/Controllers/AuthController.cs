@@ -1,6 +1,5 @@
 ﻿using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.Repository.Interface;
-using GroupProject_HRM_Library.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroupProject_HRM_Api.Controllers
@@ -11,13 +10,10 @@ namespace GroupProject_HRM_Api.Controllers
     {
 
         private IEmployeeRepository employeeRepository;
-        private IJWTServices jWTServices;
 
-
-        public AuthController(IEmployeeRepository employeeRepository, IJWTServices jWTServices)
+        public AuthController(IEmployeeRepository employeeRepository)
         {
             this.employeeRepository = employeeRepository;
-            this.jWTServices = jWTServices;
         }
 
         [HttpPost("Authenticate")]

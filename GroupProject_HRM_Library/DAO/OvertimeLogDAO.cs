@@ -50,10 +50,12 @@ namespace GroupProject_HRM_Library.DAO
                     return await this._dbContext.OvertimeLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.EmployeeID == emplID)
+                                            .OrderByDescending(x => x.OverTimeDate)
                                             .ToListAsync();
                 }
                 return await this._dbContext.OvertimeLogs
                                             .Include(x => x.Employee)
+                                            .OrderByDescending(x => x.OverTimeDate)
                                             .Where(x => x.EmployeeID == emplID && x.OvertimeLogStatus == status)
                                             .ToListAsync();
             }
@@ -95,11 +97,13 @@ namespace GroupProject_HRM_Library.DAO
                     return await this._dbContext.OvertimeLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.Employee.EmployeeProjects.Any(p => p.ProjectID == projectID))
+                                            .OrderByDescending(x => x.OverTimeDate)
                                             .ToListAsync();
                 }
                 return await this._dbContext.OvertimeLogs
                                             .Include(x => x.Employee)
                                             .Where(x => x.Employee.EmployeeProjects.Any(p => p.ProjectID == projectID) && x.OvertimeLogStatus == status)
+                                            .OrderByDescending(x => x.OverTimeDate)
                                             .ToListAsync();
 
             }
@@ -117,11 +121,13 @@ namespace GroupProject_HRM_Library.DAO
                 {
                     return await this._dbContext.OvertimeLogs
                         .Include(x => x.Employee)
+                        .OrderByDescending(x => x.OverTimeDate)
                         .ToListAsync();
                 }
 
                 return await this._dbContext.OvertimeLogs
                     .Include(x => x.Employee)
+                    .OrderByDescending(x => x.OverTimeDate)
                     .Where(x => x.OvertimeLogStatus == status)
                     .ToListAsync();
 

@@ -1,4 +1,4 @@
-﻿using GroupProject_HRM_Library.DTOs.Authenticate;
+using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Models;
@@ -25,5 +25,6 @@ namespace GroupProject_HRM_Library.Repository.Interface
         public Task<Employee> UpdateStatusEmployee(UpdateStatusEmployeeRequest employeeRequest);
 
         public Task<List<Employee>> GetAllEmployee();
+        public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameNotInAnyProjectAsync();
     }
 }

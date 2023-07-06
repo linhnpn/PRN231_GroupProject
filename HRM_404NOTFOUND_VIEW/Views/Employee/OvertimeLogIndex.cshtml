@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Overtime Log";
 }
 <style>
     html {
@@ -67,6 +67,7 @@
                         fields: {
                             overtimeID: { type: "number" },
                             overTimeDate: { type: "date" },
+                            logDate: { type: "date" },
                             hours: { type: "number" },
                             description: { type: "string" },
                             overtimeLogStatus: { type: "number" }
@@ -89,7 +90,13 @@
                 filterable: { multi: true }
             }, {
                 field: "overTimeDate",
-                title: "Date",
+                title: "Overtime Date",
+                filterable: { multi: true },
+                format: "{0:dd-MM-yyyy}"
+
+            }, {
+                field: "logDate",
+                title: "Log Date",
                 filterable: { multi: true },
                 format: "{0:dd-MM-yyyy}"
 

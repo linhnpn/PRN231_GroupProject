@@ -22,25 +22,6 @@ namespace GroupProject_HRM_View.Controllers
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
         }
 
-        private IActionResult? HandleRoleAccess(string role)
-        {
-            if (role == Constants.Constants.ADMIN || role == Constants.Constants.MANAGER)
-            {
-                return Redirect(Constants.Constants.NOTFOUND_URL);
-            }
-            return null;
-        }
-
-        private IActionResult? RedirectIfAccessTokenMissing()
-        {
-            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                return Redirect(Constants.Constants.LOGIN_URL);
-            }
-            return null;
-        }
-
         public IActionResult Income()
         {
             string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");

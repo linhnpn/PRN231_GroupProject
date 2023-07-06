@@ -29,4 +29,18 @@
             };
         }
     }
+
+    public static class ListEmployeeProjectStatus
+    {
+        public static List<LeaveLogStatus> Values { get; }
+
+        static ListEmployeeProjectStatus()
+        {
+            Values = new List<LeaveLogStatus> {
+                new LeaveLogStatus(0, "NotStart"),
+                new LeaveLogStatus(1, "Work In Progress"),
+                new LeaveLogStatus(-1, "Not Start")
+            };
+        }
+    }
 }

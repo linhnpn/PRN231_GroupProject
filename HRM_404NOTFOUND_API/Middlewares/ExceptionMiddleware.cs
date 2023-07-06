@@ -45,7 +45,7 @@ namespace GroupProject_HRM_Api.Middlewares
                     context.Response.StatusCode = (int)StatusCodes.Status401Unauthorized;
                     break;
                 default:
-                    _ = context.Response.WriteAsync(JsonConvert.SerializeObject(ex.ToString()));
+                    _ = context.Response.WriteAsync(JsonConvert.SerializeObject(ex.Message));
                     check = false;
                     break;
             }

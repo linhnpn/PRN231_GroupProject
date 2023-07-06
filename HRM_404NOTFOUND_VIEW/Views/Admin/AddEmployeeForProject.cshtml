@@ -1,14 +1,16 @@
-﻿@model GroupProject_HRM_Library.DTOs.LeaveLog.LeaveLogManagerRequest
+﻿@model GroupProject_HRM_Library.DTOs.EmployeeProject.CreateEmployeeProjectRequest
 @{
-    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
-    ViewData["Title"] = "Create Leave Log";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Edit Project";
 }
 
 <div>
-    <h3>Create Leave Log</h3>
+    <h3>Add Employee for a Project</h3>
     <hr />
 </div>
-<form method="post" asp-action="CreateLeaveLog" enctype="multipart/form-data">
+<form method="post" asp-action="AddEmployeeForProject">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="@Model.ProjectID" value="ViewBag.ProjectID"/>
     <div class="row">
         <div class="form-group col-8">
             <label class="control-label">Employee: </label>
@@ -19,10 +21,10 @@
         </div>
         <div class="form-group col-4">
             <label class="control-label">Status: </label>
-            <select asp-for="LeaveLogStatus" class="form-control" asp-items="ViewBag.LeaveLogStatuses">
-                <option value="">--Please Select a Leave Log Status--</option>
+            <select asp-for="EmployeeProjectStatus" class="form-control" asp-items="ViewBag.EmployeeProjectStatuses">
+                <option value="">--Please Select a Overtime Log Status--</option>
             </select>
-            <span asp-validation-for="LeaveLogStatus" class="text-danger"></span>
+            <span asp-validation-for="EmployeeProjectStatus" class="text-danger"></span>
         </div>
     </div>
     <div class="row">
@@ -37,27 +39,11 @@
             <span asp-validation-for="EndDate" class="text-danger"></span>
         </div>
     </div>
-    <div class="row">
-        <div class="form-group col-12">
-            <label class="control-label">Reason:</label>
-            <textarea style="height: 20vh" rows="5" class="form-control" asp-for="Reason"></textarea>
-            <span asp-validation-for="Reason" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-12">
-            <label class="control-label">Image Proof:</label>
-            <input type="file" class="form-control-file" asp-for="File">
-            <span asp-validation-for="File" class="text-danger"></span>
-        </div>
-    </div>
     <div class="form-group float-right mt-3">
+        <input type="hidden" asp-for="ProjectID" />
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
 </form>
-<div class="mt-2">
-    <a href="/Manager/LeaveLogIndex" class="btn btn-danger">Back to Home Page</a>
-</div>
 
 @section Scripts {
     @{

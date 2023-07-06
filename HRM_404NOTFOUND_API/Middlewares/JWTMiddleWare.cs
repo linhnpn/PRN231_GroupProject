@@ -54,7 +54,7 @@ namespace GroupProject_HRM_Api.Middlewares
                 };
                 errors.Add(error);
                 var message = JsonConvert.SerializeObject(errors);
-                throw new ForBiddenException(message);
+                throw new ForBiddenException(message.ToString());
             }
         }
     }

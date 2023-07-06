@@ -56,6 +56,12 @@
                             <p>Your Income</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="logout" href="/Auth/Logout">
+                            <i class="nc-icon nc-circle-09"></i>
+                            <p>Logout</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -101,25 +107,6 @@
                                     <span class="no-icon">Account</span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle"
-                                   href="#"
-                                   id="navbarDropdownMenuLink"
-                                   data-toggle="dropdown"
-                                   aria-haspopup="true"
-                                   aria-expanded="false">
-                                    <span class="no-icon">Setting</span>
-                                </a>
-                                <div class="dropdown-menu"
-                                     aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                    <div class="divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
-                                </div>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" onclick="logout" asp-controller="Auth" asp-action="Logout">
                                     <span class="no-icon">Log out</span>
@@ -138,20 +125,6 @@
             <footer class="footer">
                 <div class="container-fluid" style="">
                     <nav>
-                        <ul class="footer-menu">
-                            <li>
-                                <a href="#"> Home </a>
-                            </li>
-                            <li>
-                                <a href="#"> Company </a>
-                            </li>
-                            <li>
-                                <a href="#"> Portfolio </a>
-                            </li>
-                            <li>
-                                <a href="#"> Blog </a>
-                            </li>
-                        </ul>
                         <p class="copyright text-center">
                             ©
                             <script>

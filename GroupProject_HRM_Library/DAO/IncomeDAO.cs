@@ -20,7 +20,7 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Incomes.Where(x => x.EmployeeID == id).ToListAsync();
+                return await _dbContext.Incomes.OrderByDescending(x => x.EndDate).Where(x => x.EmployeeID == id).ToListAsync();
             }
             catch (Exception ex)
             {

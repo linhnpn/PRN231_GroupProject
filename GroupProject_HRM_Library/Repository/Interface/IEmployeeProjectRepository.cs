@@ -1,4 +1,4 @@
-﻿using GroupProject_HRM_Library.DTOs.EmployeeProject;
+using GroupProject_HRM_Library.DTOs.EmployeeProject;
 using GroupProject_HRM_Library.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,9 @@ namespace GroupProject_HRM_Library.Repository.Interface
 {
     public interface IEmployeeProjectRepository
     {
+        public Task CreateEmployeeProjectRequestAsync(CreateEmployeeProjectRequest request);
+        public Task UpdateEmployeeProjectRequestAsync(UpdateEmployeeProjectRequest request);
+        public Task DeleteEmployeeProjectRequestAsync(int employeeID, int projectID);
         public Task<EmployeeProject> AssignEmployeeToProject(AssignEmployeeToProjectRequest assignRequest);
     }
 }

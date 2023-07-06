@@ -22,6 +22,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet, ActionName("GetProjects")]
+        [Authorize]
         public async Task<IActionResult> GetProjectsAsync()
         {
             List<GetProjectResponse> proResponses = await _projectRepository.GetProjectResponsesAsync();
@@ -32,6 +33,7 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
         [HttpGet("Sort"), ActionName("GetProjectsSorted")]
+        [Authorize]
         public async Task<IActionResult> GetTaxesSortedAsync(
             [Required][FromQuery] string? projectName,
             [FromQuery] decimal? bonus = null,
@@ -52,6 +54,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet("{id}"), ActionName("GetProject")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetProjectAsync([FromRoute] int id)
         {
             GetProjectDetailResponse proResponse = await _projectRepository.GetProjectResponseAsync(id);
@@ -78,6 +81,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("PostProject")]
+        [Authorize]
         public async Task<IActionResult> PostProjectAsync([FromBody] CreateProjectRequest value)
         {
             if (!ModelState.IsValid)
@@ -108,6 +112,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPut("{id}"), ActionName("PutProject")]
+        [Authorize]
         public async Task<IActionResult> PutProjectAsync([FromRoute] int id, [FromBody] UpdateProjectRequest value)
         {
             if (!ModelState.IsValid)
@@ -138,6 +143,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPut("Status/{id}"), ActionName("PutProjectStatus")]
+        [Authorize]
         public async Task<IActionResult> PutProjectStatusAsync(
             [FromRoute] int id,
             [Required(ErrorMessage = "Project Status is required")][FromBody] ProjectEnum.ProjectStatus value)
@@ -170,6 +176,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpDelete("{id}"), ActionName("DeleteTax")]
+        [Authorize]
         public async Task<IActionResult> DeleteProjectAsync([FromRoute] int id)
         {
             await _projectRepository.DeleteProjectRequestAsync(id);

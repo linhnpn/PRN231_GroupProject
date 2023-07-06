@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Notification Page";
+}
+
+<div>
+    <h3>Notification Page</h3>
+    <hr />
+</div>
+<div style="min-height: 70vh !important" class="row">
+    <div id="notificationGrid" class="col-md-6">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        ShowAllNotification();
+
+        function ShowAllNotification() {
+            $("#NotificaitonMenu").html("");
+            $.ajax({
+                url: "https://localhost:5000/api/Notification/" + sessionStorage.getItem('EMPLOYEE_ID'),
+                type: "get",
+                contentType: "application/json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                },
+                success: function (result, status, xhr) {
+
+                    var listNoti = result["data"];
+                    if (listNoti.length === 0 || listNoti == null) {
+                        var notification = $('<div>').addClass('alert alert-info');
+                        var span = $('<span>').text("Your dont have any Notification!");
+                        notification.append(span);
+                        $('#notificationGrid').append(notification);
+                    }
+                    $.each(listNoti, function (index, value) {
+                        var notification = $('<div>').addClass('alert alert-info');
+                        var span = $('<span>').text(value.notificationDetail);
+                        notification.append(span);
+                        $('#notificationGrid').append(notification);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr);
+                },
+            });
+        }
+    });
+</script>

@@ -57,6 +57,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/Employee/NotificationIndex">
+                            <i class="nc-icon nc-bell-55"></i>
+                            <p>Notifications</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" onclick="logout" href="/Auth/Logout">
                             <i class="nc-icon nc-circle-09"></i>
                             <p>Logout</p>
@@ -219,7 +225,7 @@
         $navItems.find('a[href="' + currentUrl + '"]').parent().addClass('active');
     });
 </script>
-<script type="text/javascript">
+@*<script type="text/javascript">
     $(document).ready(function () {
         ShowAllNotification();
 
@@ -245,5 +251,5 @@
             });
         }
     });
-</script>
+</script>*@
 </html>

@@ -10,11 +10,15 @@ namespace GroupProject_HRM_Library.DTOs.LeaveLog
 {
     public class LeaveLogManagerRequest
     {
-        [Required(ErrorMessage = "Required")]
+        [Required]
         public DateTime StartDate { get; set; }
+        [Required]
         public DateTime EndDate { get; set; }
+        [Required]
         public string? Reason { get; set; }
+        [Required]
         public int EmployeeID { get; set; }
+        [Required]
         public int LeaveLogStatus { get; set; }
         public IFormFile? File { get; set; }
     }

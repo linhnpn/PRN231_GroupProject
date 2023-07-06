@@ -19,6 +19,8 @@ namespace GroupProject_HRM_View.Controllers
         private string EmployeeApiUrl = "";
         private readonly string TaxAPIUrl = "";
         private readonly string ProjectApiUrl = "";
+        private readonly string EmployeeProjectApiUrl = "";
+        private readonly string IncomeApiUrl = "";
 
         public AdminController()
         {
@@ -29,6 +31,8 @@ namespace GroupProject_HRM_View.Controllers
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
             TaxAPIUrl = "https://localhost:5000/api/Tax";
             ProjectApiUrl = "https://localhost:5000/api/Project";
+            EmployeeProjectApiUrl = "https://localhost:5000/api/EmployeeProject";
+            IncomeApiUrl = "https://localhost:5000/api/Income";
         }
         public IActionResult TaxIndex()
         {
@@ -55,7 +59,68 @@ namespace GroupProject_HRM_View.Controllers
             return View();
         }
 
-        public async Task<IActionResult> AddEmployeeForProject(int projectId)
+        public IActionResult NotificationIndex()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> CalculateIncome()
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+            var contentData = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync($"{IncomeApiUrl}/all", contentData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Some employee dont have payroll cannot have new income!";
+            }
+            else
+            {
+                TempData["Error"] = "Error while calling WebAPI!";
+            }
+
+            return Redirect("./EmployeeManagement");
+        }
+
+        public async Task<IActionResult> EmplProjCreate(int id)
         {
             string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
             string? role = HttpContext.Session.GetString("ROLE_NAME");
@@ -80,7 +145,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            HttpResponseMessage responseProject = await client.GetAsync($"{ProjectApiUrl}/projectId={projectId}");
+            HttpResponseMessage responseProject = await client.GetAsync($"{ProjectApiUrl}/projectId={id}");
             string strDataProject = await responseProject.Content.ReadAsStringAsync();
             GetProjectResponseApi? project = JsonSerializer.Deserialize<GetProjectResponseApi>(strDataProject, options);
 
@@ -95,7 +160,7 @@ namespace GroupProject_HRM_View.Controllers
             ViewBag.Employees = new SelectList((System.Collections.IEnumerable)employees.Data, "EmployeeID", "EmployeeName");
             ViewBag.EmployeeProjectStatuses = new SelectList(ListEmployeeProjectStatus.Values, "StatusID", "StatusName");
 
-            ViewBag.ProjectID = projectId;
+            TempData["ProjectID"] = id;
             return View();
         }
         public IActionResult CreateTax()
@@ -209,7 +274,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 return Redirect(Constants.Constants.LOGIN_URL);
             }
-
+            TempData["ProjectID"] = id;
             return View();
         }
 
@@ -254,7 +319,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -277,7 +342,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -309,7 +374,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -354,7 +419,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -372,21 +437,21 @@ namespace GroupProject_HRM_View.Controllers
                 PropertyNameCaseInsensitive = true,
             };
             var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(employeeUpdate), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PutAsync(EmployeeApiUrl , jsonContent);
+            HttpResponseMessage response = await client.PutAsync(EmployeeApiUrl, jsonContent);
             string strData = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return RedirectToAction("EmployeeManagement");
         }
 
 
-        public async Task<IActionResult> CreateEmployee()
+        public IActionResult CreateEmployee()
         {
             string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
             string? role = HttpContext.Session.GetString("ROLE_NAME");
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }
@@ -402,6 +467,46 @@ namespace GroupProject_HRM_View.Controllers
             return View();
         }
 
+
+        public async Task<IActionResult> AddEmployeeForProject(CreateEmployeeProjectRequest request)
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+
+            if (ModelState.IsValid)
+            {
+                string strData = JsonSerializer.Serialize(request);
+                var contentData = new StringContent(strData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(EmployeeProjectApiUrl, contentData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Message"] = "Insert successfully!";
+                }
+                else
+                {
+                    TempData["Message"] = "Error while calling WebAPI!";
+                }
+            }
+            return Redirect("./DetailProjectIndex/" + request.ProjectID);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeRequest createEmployeeRequest)
         {
@@ -410,7 +515,7 @@ namespace GroupProject_HRM_View.Controllers
             if (!string.IsNullOrEmpty(accessToken))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                if (role == Constants.Constants.EMPLOYEE_URL)
+                if (role == Constants.Constants.EMPLOYEE)
                 {
                     return Redirect(Constants.Constants.NOTFOUND_URL);
                 }

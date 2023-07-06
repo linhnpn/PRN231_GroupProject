@@ -65,6 +65,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost("all"), ActionName("Post Income")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostIncomeAllAsync()
         {
 

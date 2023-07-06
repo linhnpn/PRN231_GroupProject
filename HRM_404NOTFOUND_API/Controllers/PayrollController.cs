@@ -2,6 +2,7 @@
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -17,6 +18,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post Payroll")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostPayrollAsync([FromBody] PayrollRequest request)
         {
             if (!ModelState.IsValid)
@@ -49,6 +51,7 @@ namespace GroupProject_HRM_Api.Controllers
 
 
             [HttpGet("{id}"), ActionName("Get Payroll")]
+            [Authorize(Roles = "Admin")]
             public async Task<IActionResult> GetPayrollEmplIDAsync([FromRoute] int id)
             {
                 if (!ModelState.IsValid)

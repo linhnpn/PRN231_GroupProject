@@ -29,6 +29,9 @@
                         $.ajax({
                             url: "https://localhost:5000/api/Tax",
                             type: "GET",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             success: function (result) {
                                 options.success(result);
                             },
@@ -42,6 +45,9 @@
                         $.ajax({
                             url: "https://localhost:5000/api/Tax/" + taxIDToDelete,
                             type: "DELETE",
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             success: function (result) {
                                 options.success(result);
                             },
@@ -56,6 +62,9 @@
                         $.ajax({
                             url: "https://localhost:5000/api/Tax/" + taxIDToUpdate,
                             type: "PUT", // Use the appropriate HTTP method for updating (e.g., PUT or PATCH)
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             data: options.data, // Include the updated data in the request body
                             success: function (result) {
                                 options.success(result);
@@ -71,6 +80,9 @@
                         $.ajax({
                             url: "https://localhost:5000/api/Tax",
                             type: "POST", // Use the appropriate HTTP method for creating
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+                            },
                             data: newData, // Send the new data in the request payload
                             success: function (result) {
                                 options.success(result);

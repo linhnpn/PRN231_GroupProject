@@ -3,6 +3,7 @@ using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +25,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet, ActionName("GetTaxes")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTaxesAsync()
         {
             List<GetTaxResponse> taxResponses = await _taxRepository.GetTaxResponsesAsync();
@@ -35,6 +37,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         // GET: api/<TaxController>/Sort
+        [Authorize(Roles = "Admin")]
         [HttpGet("Sort"), ActionName("GetTaxesSorted")]
         public async Task<IActionResult> GetTaxesSortedAsync(
             [Required][FromQuery] decimal? minSalary,
@@ -63,6 +66,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // GET api/<TaxController>/5
         [HttpGet("{id}"), ActionName("GetTax")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTaxAsync([FromRoute] int id)
         {
             GetTaxResponse taxResponse = await _taxRepository.GetTaxResponseAsync(id);
@@ -76,6 +80,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // POST api/<TaxController>
         [HttpPost, ActionName("PostTax")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostTaxAsync([FromBody] CreateTaxRequest value)
         {
             if (!ModelState.IsValid)
@@ -107,6 +112,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // PUT api/<TaxController>/5
         [HttpPut("{id}"), ActionName("PutTax")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromBody] UpdateTaxRequest value)
         {
             if (!ModelState.IsValid)
@@ -138,6 +144,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // PUT api/<TaxController>/5
         [HttpPut("{id}/Status"), ActionName("PutTaxStatus")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutTaxStatusAsync(
             [FromRoute] int id, 
             [Required(ErrorMessage = "Tax Status is required")][FromBody] TaxEnum.TaxStatus value)
@@ -171,6 +178,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // DELETE api/<TaxController>/5
         [HttpDelete("{id}"), ActionName("DeleteTax")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTaxAsync([FromRoute] int id)
         {
             await _taxRepository.DeleteTaxRequestAsync(id);

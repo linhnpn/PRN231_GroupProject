@@ -2,6 +2,7 @@
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -21,6 +22,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post OvertimeLog")]
+        [Authorize]
         public async Task<IActionResult> PostOvertimeLogAsync(OvertimeLogRequest request)
         {
             if (!ModelState.IsValid)
@@ -48,11 +50,12 @@ namespace GroupProject_HRM_Api.Controllers
             return Ok(new
             {
                 Success = true,
-                Data = "Created flower bouquet successfully."
+                Data = "Created overtime Log successfully."
             });
         }
 
         [HttpGet("{id}"), ActionName("Get OvertimeLog")]
+        [Authorize]
         public async Task<IActionResult> GetOvertimeLogByIDAsync([FromRoute] int id)
         {
             GetOvertimeLogResponse leaveLogResponse = await this._overtimeLogRepository.GetOvertimeLogAsync(id);
@@ -64,6 +67,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOvertimeLogAsync([FromRoute] int id, [FromForm] UpdateOvertimeLogRequest updateOvertimeLogRequest)
         {
             if (!ModelState.IsValid)
@@ -94,6 +98,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPut("status/{id}")]
+        [Authorize]
         public async Task<IActionResult> PutStatusOvertimeLogAsync([FromRoute] int id, [FromQuery] int status)
         {
             if (!ModelState.IsValid)
@@ -124,6 +129,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet("employee"), ActionName("GetOvertimeLogByEmplIDs")]
+        [Authorize]
         public async Task<IActionResult> GetOvertimeLogsAsync([FromQuery] int id, [FromQuery] int? status)
         {
             List<GetOvertimeLogResponse> leaveLogResponses = await this._overtimeLogRepository.GetOvertimeLogResponsesByEmplIDAsync(id, status);
@@ -135,6 +141,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet("mangager"), ActionName("GetOvertimeLogByEmplIDs")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetOvertimeLogByProjectIDsAsync([FromQuery] int managerId, [FromQuery] int? status)
         {
             int projectId = await _projectRepository.GetIdProjectBaseOnManager(managerId);
@@ -147,6 +154,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpGet, ActionName("GetOvertimeLogByStatuses")]
+        [Authorize]
         public async Task<IActionResult> GetOvertimeLogByProjectIDsAsync([FromQuery] int? status)
         {
             List<GetOvertimeLogResponse> leaveLogResponses = await this._overtimeLogRepository.GetOvertimeLogResponsesByStatusAsync(status);

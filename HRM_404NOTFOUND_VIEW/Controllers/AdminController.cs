@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using GroupProject_HRM_View.Models.Project;
-using GroupProject_HRM_Library.DTOs.EmployeeProject;
 
 namespace GroupProject_HRM_View.Controllers
 {
@@ -614,7 +612,7 @@ namespace GroupProject_HRM_View.Controllers
                 PropertyNameCaseInsensitive = true,
             };
             var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(assignRequest), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PostAsync(EmployeeProjectApipUrl + "/AssignEmployee", jsonContent);
+            HttpResponseMessage response = await client.PostAsync(EmployeeProjectApiUrl + "/AssignEmployee", jsonContent);
             string strData = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return RedirectToAction("DetailProjectIndex", new { id = assignRequest.ProjectId});

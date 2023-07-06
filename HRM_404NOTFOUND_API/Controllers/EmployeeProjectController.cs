@@ -1,14 +1,10 @@
 using GroupProject_HRM_Library.DTOs.EmployeeProject;
-using GroupProject_HRM_Library.DTOs.Tax;
-using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace GroupProject_HRM_Api.Controllers
 {
@@ -25,6 +21,7 @@ namespace GroupProject_HRM_Api.Controllers
 
         // POST api/<TaxController>
         [HttpPost, ActionName("PostTax")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostTaxAsync([FromBody] CreateEmployeeProjectRequest value)
         {
             if (!ModelState.IsValid)
@@ -55,6 +52,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         // PUT api/<TaxController>/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("update-empl"), ActionName("PutTax")]
         public async Task<IActionResult> PutTaxAsync([FromBody] UpdateEmployeeProjectRequest value)
         {
@@ -85,7 +83,8 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        [HttpDelete(), ActionName("DeleteTax")]
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTaxAsync([FromQuery] int employeeID, [FromQuery] int projectID)
         {
             await _employeeProjectRepository.DeleteEmployeeProjectRequestAsync(employeeID, projectID);

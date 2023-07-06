@@ -20,6 +20,7 @@ namespace GroupProject_HRM_Api.Controllers
             _projectRepository = projectRepository;
         }
         [HttpGet("{id}"), ActionName("Get Profile")]
+        [Authorize]
         public async Task<IActionResult> GetProfileAsync([FromRoute] int id)
         {
             GetProfileResponse getProfileResponse = await this._employeeRepository.GetProfileEmplAsync(id);
@@ -29,7 +30,7 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = getProfileResponse
             });
         }
-
+        [Authorize(Roles = "Manager")]
         [HttpGet("manager/{id}"), ActionName("Get Employee Of A Project")]
         public async Task<IActionResult> GetListEmplBaseManagerAsync([FromRoute] int id)
         {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GroupProject_HRM_Library.Models
 {
@@ -20,13 +21,21 @@ namespace GroupProject_HRM_Library.Models
         public string? Password { get; set; }
         public int EmployeeStatus { get; set; }
         public int RoleID { get; set; }
+        [JsonIgnore]
         public Role? Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Income>? Incomes { get; set;}
+        [JsonIgnore]
         public virtual ICollection<Notification>? Notifications { get; set; }
+        [JsonIgnore]
         public virtual ICollection<EmployeeProject>? EmployeeProjects { get; set;}
+        [JsonIgnore]
         public virtual ICollection<Payroll>? Payrolls { get; set;}
+        [JsonIgnore]
         public virtual ICollection<LeaveLog>? LeaveLogs { get; set; }
+        [JsonIgnore]
         public virtual ICollection<OvertimeLog>? OvertimeLogs { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Bonus>? Bonuses { get; set; }
 
     }

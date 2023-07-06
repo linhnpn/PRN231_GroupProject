@@ -35,6 +35,8 @@ builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
 builder.Services.AddScoped<IJWTServices, JWTServices>();
 builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+builder.Services.AddScoped<IEmployeeProjectRepository, EmployeeProjectRepository>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(PayrollProfile), typeof(TaxProfile), typeof(OvertimeLogProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile), typeof(BonusProfile));
 

@@ -1,4 +1,5 @@
-﻿using GroupProject_HRM_Library.Enums;
+﻿using GroupProject_HRM_Library.DTOs.Employee;
+using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,9 +49,18 @@ namespace GroupProject_HRM_Library.DAO
         {
             try
             {
-                return await _dbContext.Employees.Where(em => em.UserName.Equals(username) && em.Password.Equals(password))
+                var employee = _dbContext.Employees.Where(em => em.UserName.Equals(username))
                     .Include(x => x.Role)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
+                if (employee != null)
+                {
+                    bool isMatch = BCrypt.Net.BCrypt.Verify(password, employee.Password);
+                    if (isMatch)
+                    {
+                        return employee;
+                    }
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -127,6 +137,100 @@ namespace GroupProject_HRM_Library.DAO
                                 .ToListAsync();
 
                 return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> CreateEmployee(CreateEmployeeRequest employeeCreate)
+        {
+            try
+            {
+                string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(employeeCreate.Password, salt);
+                Employee employee = new Employee()
+                {
+                    EmailAddress = employeeCreate.EmailAddress,
+                    EmployeeName = employeeCreate.EmployeeName,
+                    EmployeeImage = employeeCreate.EmployeeImage,
+                    EmployeeStatus = (int)EmployeeStatus.Active,
+                    Address = employeeCreate.Address,
+                    Gender = employeeCreate.Gender,
+                    PhoneNumber = employeeCreate.PhoneNumber,
+                    BirthDate = employeeCreate.BirthDate,
+                    UserName = employeeCreate.UserName,
+                    Password = hashedPassword,
+                    RoleID = employeeCreate.RoleID,
+                };
+                _dbContext.Employees.Add(employee);
+                return _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> UpdateEmployee(UpdateEmployeeRequest updateEmployee)
+        {
+            try
+            {
+                var employee = _dbContext.Employees.FirstOrDefault(x => x.EmployeeID == updateEmployee.EmployeeID);
+                employee.EmailAddress = updateEmployee.EmailAddress;
+                employee.EmployeeName = updateEmployee.EmployeeName;
+                employee.EmployeeImage = updateEmployee.EmployeeImage;
+                employee.EmployeeStatus = updateEmployee.EmployeeStatus;
+                employee.Address = updateEmployee.Address;
+                employee.Gender = updateEmployee.Gender;
+                employee.PhoneNumber = updateEmployee.PhoneNumber;
+                employee.BirthDate = updateEmployee.BirthDate;
+                employee.RoleID = updateEmployee.RoleID;
+                _dbContext.Employees.Update(employee);
+                _dbContext.SaveChanges();
+                return employee;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> UpdateStatusEmployee(UpdateStatusEmployeeRequest employeeRequest)
+        {
+            try
+            {
+                var employee = _dbContext.Employees.FirstOrDefault(x => x.EmployeeID == employeeRequest.EmployeeId);
+                employee.EmployeeStatus = employeeRequest.EmployeeStatus;
+                _dbContext.Employees.Update(employee);
+                _dbContext.SaveChanges();
+                return employee;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> GetEmployeeByUsername(string username)
+        {
+            try
+            {
+                return _dbContext.Employees.Where(em => em.UserName.Equals(username))
+                    .FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Employee>> GetAllEmployee()
+        {
+            try
+            {
+                return _dbContext.Employees.Where(e => e.RoleID != (int)EmployeeRole.Admin).ToList();
             }
             catch (Exception ex)
             {

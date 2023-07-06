@@ -3,6 +3,7 @@ using Google.Cloud.Storage.V1;
 using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_Library.DTOs.Income;
+using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Infrastructure;
@@ -35,6 +36,11 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 if (employee == null)
                 {
                     throw new UnauthorizedException("Username or Password is invalid.");
+                }
+
+                if(employee.EmployeeStatus == (int)EmployeeStatus.Inactive)
+                {
+                    throw new UnauthorizedException("The account is in an inaccessible state.");
                 }
 
                 var accessToken = jWTServices.GenerateJWTToken(employee.EmployeeID, employee.UserName, employee.Role.RoleName);
@@ -128,6 +134,85 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new BadRequestException(JsonConvert.SerializeObject(errors));
                 }
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<int> CreateEmployee(CreateEmployeeRequest employeeRequest)
+        {
+            try
+            {
+                var employeeCheck = await this._unitOfWork.EmployeeDAO.GetEmployeeByUsername(employeeRequest.UserName);
+                if (employeeCheck != null) throw new BadRequestException("The username is duplicated.");
+                return await this._unitOfWork.EmployeeDAO.CreateEmployee(employeeRequest);
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                errors.Add(error);
+                if (ex.Message.Contains("The username is duplicated."))
+                {
+                    throw new BadRequestException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Employee>> GetAllEmployee()
+        {
+            return await this._unitOfWork.EmployeeDAO.GetAllEmployee();
+        }
+
+        public async Task<Employee> UpdateEmployee(UpdateEmployeeRequest updateEmployee)
+        {
+            try
+            {
+                var employeeCheck = await this._unitOfWork.EmployeeDAO.GetEmployeeByIDAsync(updateEmployee.EmployeeID);
+                if (employeeCheck == null) throw new NotFoundException("The employeeID is not found.");
+                return await this._unitOfWork.EmployeeDAO.UpdateEmployee(updateEmployee);
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                errors.Add(error);
+                if (ex.Message.Contains("The employeeID is not found."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> UpdateStatusEmployee(UpdateStatusEmployeeRequest employeeRequest)
+        {
+            try
+            {
+                var employeeCheck = await this._unitOfWork.EmployeeDAO.GetEmployeeByIDAsync(employeeRequest.EmployeeId);
+                if (employeeCheck == null) throw new NotFoundException("The employeeID is not found.");
+                return await this._unitOfWork.EmployeeDAO.UpdateStatusEmployee(employeeRequest);
+            }
+            catch (Exception ex)
+            {
+                List<ErrorDetail> errors = new List<ErrorDetail>();
+                ErrorDetail error = new ErrorDetail()
+                {
+                    FieldNameError = "Exception",
+                    DescriptionError = new List<string>() { ex.Message }
+                };
+                if (ex.Message.Contains("The employeeID is not found."))
+                {
+                    throw new NotFoundException(JsonConvert.SerializeObject(errors));
+                }
+                errors.Add(error);
                 throw new Exception(ex.Message);
             }
         }

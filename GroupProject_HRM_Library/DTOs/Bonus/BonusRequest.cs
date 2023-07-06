@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GroupProject_HRM_Library.DTOs.Bonus
 {
     public class BonusRequest
     {
-        [Required(ErrorMessage = "Employee ID is required")]
+        [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Bonus Value is required")]
@@ -18,8 +13,10 @@ namespace GroupProject_HRM_Library.DTOs.Bonus
         public decimal BonusValue { get; set; }
 
         [Required(ErrorMessage = "Timestamp is required")]
+        [DataType(DataType.DateTime)]
         public DateTime Timestamp { get; set; }
-
+        [RegularExpression(@"^[1-9][0-9]*$", ErrorMessage = "EmployeeID is invalid")]
+        [Range(1, 3)]
         [Required(ErrorMessage = "Employee ID is required")]
         public int EmployeeID { get; set; }
     }

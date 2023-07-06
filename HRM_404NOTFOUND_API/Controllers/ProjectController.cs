@@ -21,7 +21,6 @@ namespace GroupProject_HRM_Api.Controllers
             _projectRepository = projectRepository;
         }
 
-        // GET: api/<ProjectController>
         [HttpGet, ActionName("GetProjects")]
         public async Task<IActionResult> GetProjectsAsync()
         {
@@ -32,7 +31,6 @@ namespace GroupProject_HRM_Api.Controllers
                 Data = proResponses
             });
         }
-        // GET: api/<ProjectController>/Sort
         [HttpGet("Sort"), ActionName("GetProjectsSorted")]
         public async Task<IActionResult> GetTaxesSortedAsync(
             [Required][FromQuery] string? projectName,
@@ -53,7 +51,6 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        // GET api/<ProjectController>/5
         [HttpGet("{id}"), ActionName("GetProject")]
         public async Task<IActionResult> GetProjectAsync([FromRoute] int id)
         {
@@ -80,7 +77,6 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        // POST api/<ProjectController>
         [HttpPost, ActionName("PostProject")]
         public async Task<IActionResult> PostProjectAsync([FromBody] CreateProjectRequest value)
         {
@@ -111,7 +107,6 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        // PUT api/<ProjectController>/5
         [HttpPut("{id}"), ActionName("PutProject")]
         public async Task<IActionResult> PutProjectAsync([FromRoute] int id, [FromBody] UpdateProjectRequest value)
         {
@@ -142,7 +137,6 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        // PUT api/<ProjectController>/5
         [HttpPut("Status/{id}"), ActionName("PutProjectStatus")]
         public async Task<IActionResult> PutProjectStatusAsync(
             [FromRoute] int id,
@@ -175,7 +169,6 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
-        // DELETE api/<ProjectController>/5
         [HttpDelete("{id}"), ActionName("DeleteTax")]
         public async Task<IActionResult> DeleteProjectAsync([FromRoute] int id)
         {

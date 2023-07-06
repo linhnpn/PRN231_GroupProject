@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Home Page";
 }
@@ -11,15 +11,38 @@
 
 <div>
     <h3>Employee Management</h3>
-    <div class="mt-2">      
-            <a href="/Admin/CreateEmployee"  class="btn btn-info">Create new Employee</a>
-        </div>
+    <div class="mt-2">
+        <a href="/Admin/CreateEmployee" class="btn btn-info">Create new Employee</a>
+    </div>
+    <div class="mt-2">
+        <a href="/Admin/CalculateIncome" class="btn btn-info">Calculate Income of All Employee</a>
+    </div>
     <hr />
+
 </div>
 <div id="example">
     <div id="employeeGrid"></div>
+    <div id="payrollDialog"></div>
 </div>
+
+<script type="text/x-kendo-template" id="templatePayroll">
+    <div id="rejectLeaveLogs-container">
+        <h5>Add/Update Payroll of this employee?</h5>
+        <label class="control-label">Income Per Month:</label>
+        <textarea id="incomePerMonth" class="k-textbox" style="width: 100%;" 
+        required data-role="textarea" 
+        data-required-msg="Please enter a reason for rejection." 
+        data-custom-validator="onlyNumbersValidator" 
+        data-invalid-msg="Only number are allowed and the value > 1 000 000"></textarea>
+        <div class="k-invalid-msg" data-for="incomePerMonth" style="color: red;"></div>
+        <button class="btn btn-info" id="addPayroll">Accept</button>
+        <button class="btn btn-warning float-right" id="closeBtn">Close</button>
+    </div>
+</script>
+
 <script>
+    var wnd,
+        payrollTemplate;
     $(document).ready(function () {
         $("#employeeGrid").kendoGrid({
             dataSource: {
@@ -68,65 +91,164 @@
                 pageSizes: true,
                 buttonCount: 5
             },
-            columns: [{
-                field: "employeeID",
-                title: "ID",
-                filterable: { multi: true }
-            }, {
-                field: "employeeName",
-                title: "Full Name",
-                filterable: { multi: true },
-            },{
-                field: "address",
-                title: "Address",
-                filterable: { multi: true },    
-            },{
-                field: "gender",
-                title: "Gender",
-                filterable: { multi: true },
-            },{
-                field: "phoneNumber",
-                title: "Phone",
-                filterable: { multi: true },      
-            },{
-                field: "emailAddress",
-                title: "Email",
-                filterable: { multi: true },      
-            }, {
-                field: "birthDate",
-                title: "Birth Date",
-                filterable: {
-                    multi: true
+            columns: [
+                { command: { text: "View Detail", click: showDetails }, title: " ", width: "120px" },
+                { command: { text: "Payroll", click: showPayrolls }, title: " ", width: "120px" },
+                {
+                    field: "employeeID",
+                    title: "ID",
+                    filterable: { multi: true },
+                    width: "90px"
+                }, {
+                    field: "employeeName",
+                    title: "Full Name",
+                    filterable: { multi: true },
+                    width: "250px",
+                    template: "#= truncateString(employeeName, 30) #"
+                }, {
+                    field: "address",
+                    title: "Address",
+                    filterable: { multi: true },
+                    width: "250px",
+                    template: "#= truncateString(address, 30) #"
+                }, {
+                    field: "gender",
+                    title: "Gender",
+                    filterable: { multi: true },
+                    width: 120
+                }, {
+                    field: "phoneNumber",
+                    title: "Phone",
+                    filterable: { multi: true },
+                    width: 120,
+                }, {
+                    field: "emailAddress",
+                    title: "Email",
+                    filterable: { multi: true },
+                    width: "180px",
+                }, {
+                    field: "birthDate",
+                    title: "Birth Date",
+                    filterable: {
+                        multi: true
+                    },
+                    format: "{0:dd-MM-yyyy}",
+                    width: 120,
+                }, {
+                    field: "userName",
+                    title: "Username",
+                    filterable: { multi: true },
+                    width: 120,
+                }, {
+                    field: "employeeStatus",
+                    title: "Status",
+                    filterable: { multi: true },
+                    template: function (dataItem) {
+                        if (dataItem.employeeStatus == 0) return "InActive";
+                        if (dataItem.employeeStatus == 1) return "Active";
+                        return "-";
+                    },
+                    width: 120,
                 },
-                format: "{0:dd-MM-yyyy}"
-            }, {
-                field: "userName",
-                title: "Username",
-                filterable: { multi: true },
-            },{
-               field: "employeeStatus",
-               title: "Status",
-               filterable: { multi: true },
-               template: function (dataItem) {
-                    if (dataItem.employeeStatus == 0) return "InActive";
-                    if (dataItem.employeeStatus == 1) return "Active";
-                    return "-";
+                {
+                    field: "roleID",
+                    title: "Role",
+                    filterable: { multi: true },
+                    template: function (dataItem) {
+                        if (dataItem.roleID == 1) return "Employee";
+                        if (dataItem.roleID == 2) return "Admin";
+                        if (dataItem.roleID == 3) return "Manager";
+                        return "-";
+                    },
+                    width: 120,
                 }
-            },
-            {
-                field: "roleID",
-                title: "Role",
-                filterable: { multi: true },
-                template: function (dataItem) {
-                    if (dataItem.roleID == 1) return "Employee";
-                    if (dataItem.roleID == 2) return "Admin";
-                    if (dataItem.roleID == 3) return "Manager";
-                    return "-";
-                }
-            },
-            { command: { text: "View Detail", click: showDetails }, title: " ", width: "150" }]
+            ]
         });
+        wnd = $("#payrollDialog")
+            .kendoWindow({
+                title: "Add/Update Payroll Employee",
+                modal: true,
+                visible: false,
+                resizable: false,
+                width: 400
+            }).data("kendoWindow");
+        
+        payrollTemplate = kendo.template($("#templatePayroll").html());
     });
+
+    function onlyNumbersValidator(input) {
+        if (input.is("[data-custom-validator=onlyNumbersValidator]")) {
+            var value = input.val();
+            if (value == null || value == '' || !/^\d+$/.test(value) || parseInt(value) <= 1000000) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    function showPayrolls(e) {
+        e.preventDefault();
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        wnd.content(payrollTemplate(dataItem));
+
+        $("#addPayroll").on("click", function () {
+            var payRollInput = $("#incomePerMonth");
+            var payrollValue = payRollInput.val();
+            postPayrollApi(dataItem.employeeID, payrollValue);
+            wnd.close();
+        });
+
+        $("#closeBtn").on("click", function () {
+            wnd.close();
+        });
+        getPayrollApi(dataItem.employeeID);
+        wnd.center().open();
+    }
+
+    function getPayrollApi(employeeId) {
+        $.ajax({
+            url: "https://localhost:5000/api/Payroll/" + employeeId,
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            contentType: "application/json",
+            success: function (result) {
+                var data = result['data'];
+                if (data.length !== 0 && data != null) {
+                    $("#incomePerMonth").val(data[0].incomePerMonth);
+                }
+            },
+            error: function (result) {
+                demo.showNotification("An Error When Loading Payroll", 4);
+            }
+        });
+    }
+
+    function postPayrollApi(employeeId, PayrollValue) {
+        $.ajax({
+            url: "https://localhost:5000/api/Payroll",
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
+            },
+            data: JSON.stringify({
+                employeeID: employeeId,
+                incomePerMonth: PayrollValue
+            }),
+            contentType: "application/json",
+            success: function (result) {
+                var grid = $("#employeeGrid").data("kendoGrid");
+                grid.dataSource.read();
+                grid.refresh();
+                demo.showNotification(result['data'], 1);
+            },
+            error: function (result) {
+                demo.showNotification("An Error Occur", 4);
+            }
+        });
+    }
 
     function showDetails(e) {
         var dataItem = this.dataItem($(e.currentTarget).closest("tr"));

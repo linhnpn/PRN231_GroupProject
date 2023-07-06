@@ -19,12 +19,14 @@ namespace GroupProject_HRM_Library.Repository.Implement
         private UnitOfWork _unitOfWork;
         private IMapper _mapper;
         private IJWTServices jWTServices;
+        private IEmailSenderService _emailSender;
 
-        public EmployeeRepository(IUnitOfWork unitOfWork, IMapper mapper, IJWTServices jWTServices)
+        public EmployeeRepository(IUnitOfWork unitOfWork, IMapper mapper, IJWTServices jWTServices, IEmailSenderService emailSender)
         {
             this._unitOfWork = (UnitOfWork)unitOfWork;
             this._mapper = mapper;
             this.jWTServices = jWTServices;
+            this._emailSender = emailSender;
         }
 
         public async Task<AuthenResponse> Authenticate(AuthenRequest authenRequest)
@@ -38,7 +40,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                     throw new UnauthorizedException("Username or Password is invalid.");
                 }
 
-                if(employee.EmployeeStatus == (int)EmployeeStatus.Inactive)
+                if (employee.EmployeeStatus == (int)EmployeeStatus.Inactive)
                 {
                     throw new UnauthorizedException("The account is in an inaccessible state.");
                 }
@@ -143,6 +145,8 @@ namespace GroupProject_HRM_Library.Repository.Implement
             {
                 var employeeCheck = await this._unitOfWork.EmployeeDAO.GetEmployeeByUsername(employeeRequest.UserName);
                 if (employeeCheck != null) throw new BadRequestException("The username is duplicated.");
+                await _emailSender.SendEmailAsync(employeeRequest.EmailAddress,
+                    "Your account have been create", "You was created a account from Admin!\r\nusername : " + employeeRequest.UserName + "\r\npassword: " + employeeRequest.Password);
                 return await this._unitOfWork.EmployeeDAO.CreateEmployee(employeeRequest);
             }
             catch (Exception ex)

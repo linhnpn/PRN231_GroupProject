@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GroupProject_HRM_Library.Constaints;
 using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
@@ -43,7 +44,16 @@ namespace GroupProject_HRM_Library.Repository.Implement
 
                 leaveLog.LeaveLogStatus = (int)LeaveLogEnum.Status.WAITING;
                 leaveLog.RejectReson = "";
+
                 await _unitOfWork.LeaveLogDAO.CreateLeaveLogAsync(leaveLog);
+
+                Notification notification = new Notification();
+                notification.EmployeeID = request.EmployeeID;
+                notification.NotificationDetail = Constains.NOTI_CREATE_LEAVE_LOG_DETAILS;
+                notification.Timestamp = DateTime.Now;
+                notification.isRead = false;
+                await _unitOfWork.NotificationDAO.CreateNotificationAsync(notification);
+
                 await _unitOfWork.CommitAsync();
 
             }
@@ -84,6 +94,12 @@ namespace GroupProject_HRM_Library.Repository.Implement
                     leaveLog.LinkProof = await _firebaseStorageService.UploadFile(request.File);
                 }
 
+                Notification notification = new Notification();
+                notification.EmployeeID = request.EmployeeID;
+                notification.NotificationDetail = Constains.NOTI_CREATE_LEAVE_LOG_DETAILS;
+                notification.Timestamp = DateTime.Now;
+                notification.isRead = false;
+                await _unitOfWork.NotificationDAO.CreateNotificationAsync(notification);
                 await _unitOfWork.LeaveLogDAO.CreateLeaveLogAsync(leaveLog);
                 await _unitOfWork.CommitAsync();
 

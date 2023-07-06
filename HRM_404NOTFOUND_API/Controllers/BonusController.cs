@@ -2,6 +2,7 @@
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
 using GroupProject_HRM_Library.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -19,6 +20,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post Bonus")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostBonusAsync([FromBody] BonusRequest request)
         {
             if (!ModelState.IsValid)

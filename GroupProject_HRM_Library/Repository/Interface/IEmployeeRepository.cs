@@ -17,5 +17,13 @@ namespace GroupProject_HRM_Library.Repository.Interface
         public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameAsync(int projectId);
         public Task<List<GetEmployeeResponse>> GetListEmployeeResponseAsync(int projectId);
         public Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseNoPayRollAsync();
+
+        public Task<int> CreateEmployee(CreateEmployeeRequest employeeRequest);
+
+        public Task<Employee> UpdateEmployee(UpdateEmployeeRequest updateEmployee);
+
+        public Task<Employee> UpdateStatusEmployee(UpdateStatusEmployeeRequest employeeRequest);
+
+        public Task<List<Employee>> GetAllEmployee();
     }
 }

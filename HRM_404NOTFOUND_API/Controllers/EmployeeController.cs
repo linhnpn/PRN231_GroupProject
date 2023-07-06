@@ -1,7 +1,9 @@
 ﻿using GroupProject_HRM_Library.DTOs.Employee;
+using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GroupProject_HRM_Api.Controllers
 {
@@ -74,6 +76,54 @@ namespace GroupProject_HRM_Api.Controllers
             {
                 Success = true,
                 Data = getListEmployeeResponses
+            });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateEmployee(CreateEmployeeRequest employeeRequest)
+        {
+            var result = _employeeRepository.CreateEmployee(employeeRequest);
+            return Ok(new
+            {
+                Success = true,
+                RowEffect = result.Result
+            });
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateEmployee(UpdateEmployeeRequest updateEmployeeRequest)
+        {
+            var result = _employeeRepository.UpdateEmployee(updateEmployeeRequest);
+            return Ok(new
+            {
+                Success = true,
+                Data = result.Result
+            });
+        }
+
+        [HttpPut("UpdateStatus")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateStatusEmployee(UpdateStatusEmployeeRequest employeeRequest)
+        {
+            var result = _employeeRepository.UpdateStatusEmployee(employeeRequest);
+            return Ok(new
+            {
+                Success = true,
+                Data = result.Result
+            });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetALLEmployee()
+        {
+            var result = _employeeRepository.GetAllEmployee();
+            return Ok(new
+            {
+                Success = true,
+                Data = result.Result
             });
         }
     }

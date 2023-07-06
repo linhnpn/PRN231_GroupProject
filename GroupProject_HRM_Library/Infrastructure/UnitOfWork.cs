@@ -15,6 +15,7 @@ namespace GroupProject_HRM_Library.Infrastructure
         private PayrollDAO payrollDAO;
         private BonusDAO bonusDAO;
         private TaxDAO taxDAO;
+        private NotificationDAO notificationDAO;
 
         private ProjectDAO _projectDAO;
         public UnitOfWork()
@@ -62,7 +63,7 @@ namespace GroupProject_HRM_Library.Infrastructure
         {
             get
             {
-                if(taxDAO == null)
+                if (taxDAO == null)
                 {
                     taxDAO = new TaxDAO(_dbContext);
                 }
@@ -127,6 +128,18 @@ namespace GroupProject_HRM_Library.Infrastructure
                     this.bonusDAO = new BonusDAO(this._dbContext);
                 }
                 return this.bonusDAO;
+            }
+        }
+
+        public NotificationDAO NotificationDAO
+        {
+            get
+            {
+                if (this.notificationDAO == null)
+                {
+                    this.notificationDAO = new NotificationDAO(this._dbContext);
+                }
+                return this.notificationDAO;
             }
         }
         public void Commit()

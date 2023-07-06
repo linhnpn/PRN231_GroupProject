@@ -31,11 +31,13 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IOvertimeLogRepository, OvertimeLogRepository>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
-builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IJWTServices, JWTServices>();
 builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
 builder.Services.AddScoped<IEmployeeProjectRepository, EmployeeProjectRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAutoMapper(typeof(EmployeeProfile), typeof(PayrollProfile), typeof(TaxProfile), typeof(OvertimeLogProfile), typeof(LeaveLogProfile), typeof(EmployeeProjectProfile), typeof(ProjectProfile), typeof(IncomeProfile), typeof(BonusProfile));

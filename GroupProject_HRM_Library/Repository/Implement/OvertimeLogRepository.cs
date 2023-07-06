@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GroupProject_HRM_Library.Constaints;
 using GroupProject_HRM_Library.DTOs.OvertimeLog;
 using GroupProject_HRM_Library.DTOs.OvertimeLog;
 using GroupProject_HRM_Library.DTOs.OvertimeLog;
@@ -44,6 +45,14 @@ namespace GroupProject_HRM_Library.Repository.Implement
 
                 overtimeLog.OvertimeLogStatus = (int)OvertimeLogEnum.Status.WAITING;
                 await _unitOfWork.OvertimeLogDAO.CreateOvertimeLogAsync(overtimeLog);
+
+                Notification notification = new Notification();
+                notification.EmployeeID = request.EmployeeID;
+                notification.NotificationDetail = Constains.NOTI_CREATE_OT_DETAILS;
+                notification.Timestamp = DateTime.Now;
+                notification.isRead = false;
+                await _unitOfWork.NotificationDAO.CreateNotificationAsync(notification);
+
                 await _unitOfWork.CommitAsync();
 
             }

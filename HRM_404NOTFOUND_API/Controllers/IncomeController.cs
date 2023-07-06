@@ -32,6 +32,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post Income")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostIncomeAsync([FromBody] List<CreateIncomeEmployeeResponse> request)
         {
             if (!ModelState.IsValid)

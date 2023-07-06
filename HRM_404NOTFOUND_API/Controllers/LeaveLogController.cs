@@ -45,7 +45,7 @@ namespace GroupProject_HRM_Api.Controllers
 
                 var message = JsonConvert.SerializeObject(errors);
                 throw new BadRequestException(message);
-                
+
             }
 
             await this._leavelogRepository.CreateLeaveLogRequestAsync(request);

@@ -25,11 +25,13 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
-        public async Task<Notification> GetNotificationEmplAsync(int emplID)
+        public async Task<List<Notification>> GetNotificationEmplAsync(int emplID)
         {
             try
             {
-                return await this._dbContext.Notifications.OrderBy(x => x.Timestamp).LastOrDefaultAsync(e => e.EmployeeID == emplID);
+                return await this._dbContext.Notifications
+                    .OrderByDescending(x => x.Timestamp)
+                    .Where(e => e.EmployeeID == emplID).ToListAsync();
             }
             catch (Exception ex)
             {

@@ -6,6 +6,6 @@ namespace GroupProject_HRM_Library.Repository.Interface
 {
     public interface INotificationRepository
     {
-        public Task<Notification> GetNotiEmplAsync(int id);
+        public Task<List<Notification>> GetNotiEmplAsync(int id);
     }
 }

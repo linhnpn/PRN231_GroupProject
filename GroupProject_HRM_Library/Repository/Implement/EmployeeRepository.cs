@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Google.Cloud.Storage.V1;
+using AutoMapper;
 using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_Library.DTOs.Income;
@@ -90,6 +89,19 @@ namespace GroupProject_HRM_Library.Repository.Implement
             try
             {
                 List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetEmployeeByProjectIDAsync(projectId);
+                return this._mapper.Map<List<GetListEmployeeResponseIDandName>>(employees);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<GetListEmployeeResponseIDandName>> GetListEmployeeResponseIDandNameNotInAnyProjectAsync()
+        {
+            try
+            {
+                List<Employee> employees = await this._unitOfWork.EmployeeDAO.GetEmployeeNoAnyProjectAsync();
                 return this._mapper.Map<List<GetListEmployeeResponseIDandName>>(employees);
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿using GroupProject_HRM_Library.DTOs.Employee;
+using Google.Cloud.Storage.V1;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +17,20 @@ namespace GroupProject_HRM_Library.DAO
             try
             {
                 return await _dbContext.Employees.FirstOrDefaultAsync(x => x.EmployeeID == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Employee> GetEmployeeByIDAndProjectAsync(int id)
+        {
+            try
+            {
+                return await _dbContext.Employees
+                    .Where(x => x.EmployeeProjects.Any(e => e.EmployeeID == id && e.EmployeeProjectStatus != (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress))
+                    .FirstOrDefaultAsync(x => x.EmployeeID == id);
             }
             catch (Exception ex)
             {
@@ -131,6 +145,7 @@ namespace GroupProject_HRM_Library.DAO
             try
             {
                 var result = await _dbContext.Employees
+                                .Include(x => x.EmployeeProjects)
                                 .Where(x => x.EmployeeProjects.Any(p => p.ProjectID == projectId)
                                     && x.EmployeeStatus != (int)RoleEnum.Role.ADMIN)
                                 .OrderBy(x => x.EmployeeID)
@@ -231,6 +246,24 @@ namespace GroupProject_HRM_Library.DAO
             try
             {
                 return _dbContext.Employees.Where(e => e.RoleID != (int)EmployeeRole.Admin).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Employee>> GetEmployeeNoAnyProjectAsync()
+        {
+            try
+            {
+                var result = await _dbContext.Employees
+                                .Where(x => (!x.EmployeeProjects.Any() || x.EmployeeProjects.Any(p => p.EmployeeProjectStatus != (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress))
+                                    && x.EmployeeStatus != (int)RoleEnum.Role.ADMIN)
+                                .OrderBy(x => x.EmployeeID)
+                                .ToListAsync();
+
+                return result;
             }
             catch (Exception ex)
             {

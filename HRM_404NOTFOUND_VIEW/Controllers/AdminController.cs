@@ -1,7 +1,11 @@
+using GroupProject_HRM_Library.DTOs.EmployeeProject;
 using GroupProject_HRM_Library.DTOs.Tax;
 using GroupProject_HRM_Library.DTOs.Employee;
 using GroupProject_HRM_View.Models.Employee;
+using GroupProject_HRM_View.Models.LeaveLog;
+using GroupProject_HRM_View.Models.Project;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -14,6 +18,7 @@ namespace GroupProject_HRM_View.Controllers
         private string LeaveLogApiUrl = "";
         private string EmployeeApiUrl = "";
         private readonly string TaxAPIUrl = "";
+        private readonly string ProjectApiUrl = "";
 
         public AdminController()
         {
@@ -23,6 +28,7 @@ namespace GroupProject_HRM_View.Controllers
             LeaveLogApiUrl = "https://localhost:5000/api/LeaveLog";
             EmployeeApiUrl = "https://localhost:5000/api/Employee";
             TaxAPIUrl = "https://localhost:5000/api/Tax";
+            ProjectApiUrl = "https://localhost:5000/api/Project";
         }
         public IActionResult TaxIndex()
         {
@@ -46,6 +52,50 @@ namespace GroupProject_HRM_View.Controllers
                 return Redirect(Constants.Constants.LOGIN_URL);
             }
 
+            return View();
+        }
+
+        public async Task<IActionResult> AddEmployeeForProject(int projectId)
+        {
+            string? accessToken = HttpContext.Session.GetString("ACCESS_TOKEN");
+            string? role = HttpContext.Session.GetString("ROLE_NAME");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                if (role == Constants.Constants.EMPLOYEE)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+                else if (role == Constants.Constants.MANAGER)
+                {
+                    return Redirect(Constants.Constants.NOTFOUND_URL);
+                }
+
+            }
+            else
+            {
+                return Redirect(Constants.Constants.LOGIN_URL);
+            }
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            HttpResponseMessage responseProject = await client.GetAsync($"{ProjectApiUrl}/projectId={projectId}");
+            string strDataProject = await responseProject.Content.ReadAsStringAsync();
+            GetProjectResponseApi? project = JsonSerializer.Deserialize<GetProjectResponseApi>(strDataProject, options);
+
+            if (project == null)
+            {
+                return Redirect(Constants.Constants.NOTFOUND_URL);
+            }
+
+            HttpResponseMessage responseEmployee = await client.GetAsync($"{EmployeeApiUrl}/no-project");
+            string strData = await responseEmployee.Content.ReadAsStringAsync();
+            var employees = JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
+            ViewBag.Employees = new SelectList((System.Collections.IEnumerable)employees.Data, "EmployeeID", "EmployeeName");
+            ViewBag.EmployeeProjectStatuses = new SelectList(ListEmployeeProjectStatus.Values, "StatusID", "StatusName");
+
+            ViewBag.ProjectID = projectId;
             return View();
         }
         public IActionResult CreateTax()

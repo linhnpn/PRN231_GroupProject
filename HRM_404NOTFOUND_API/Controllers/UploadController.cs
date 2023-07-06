@@ -24,7 +24,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost("sendMail")]
-        public async Task<IActionResult> Index(string email, string subject, string message)
+        public async Task<IActionResult> sendMailTest(string email, string subject, string message)
         {
             await emailSender.SendEmailAsync(email, subject, message);
             return Ok();

@@ -1,4 +1,4 @@
-﻿using GroupProject_HRM_Library.DTOs.EmployeeProject;
+using GroupProject_HRM_Library.DTOs.EmployeeProject;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +13,43 @@ namespace GroupProject_HRM_Library.DAO
             _dbContext = dbContext;
         }
 
-
-
         public async Task<EmployeeProject> GetLastProjectJoinedByEmplIDAsync(int id)
         {
             try
             {
-                return await this._dbContext.EmployeeProjects.OrderBy(x => x.EndDate).LastOrDefaultAsync(x => x.EmployeeID == id);
+                return await this._dbContext.EmployeeProjects
+                    .OrderBy(x => x.EndDate)
+                    .Where(x => x.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress)
+                    .LastOrDefaultAsync(x => x.EmployeeID == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<EmployeeProject> GetEmployeeProjectAsync(int employeeId, int projectId)
+        {
+            try
+            {
+                return await this._dbContext.EmployeeProjects
+                    .OrderBy(x => x.EndDate)
+                    .Where(x => x.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress)
+                    .FirstOrDefaultAsync(x => x.EmployeeID == employeeId && x.ProjectID == projectId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<EmployeeProject> GetEmployeeProjectNoStatusAsync(int employeeId, int projectId)
+        {
+            try
+            {
+                return await this._dbContext.EmployeeProjects
+                    .OrderBy(x => x.EndDate)
+                    .FirstOrDefaultAsync(x => x.EmployeeID == employeeId && x.ProjectID == projectId);
             }
             catch (Exception ex)
             {
@@ -66,6 +96,53 @@ namespace GroupProject_HRM_Library.DAO
             {
                 return _dbContext.EmployeeProjects.Include(p => p.Employee)
                     .Where(x => x.Employee.RoleID == (int)EmployeeRole.Manager && x.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task CreateEmployeeProjectAsync(EmployeeProject employeeProject)
+        {
+            try
+            {
+                await this._dbContext.EmployeeProjects.AddAsync(employeeProject);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void DeleteEmployeeProject(int employeeId, int projectId)
+        {
+            try
+            {
+                EmployeeProject? tax = _dbContext.EmployeeProjects.
+                    FirstOrDefault(tax => tax.EmployeeID == employeeId
+                    && tax.ProjectID == projectId);
+                _dbContext.EmployeeProjects.Remove(tax);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void Update(EmployeeProject employeeProject)
+        {
+            try
+            {
+                var exist = _dbContext.EmployeeProjects.FirstOrDefault(t => t.EmployeeID == employeeProject.EmployeeID && t.ProjectID == employeeProject.ProjectID);
+                if (exist != null)
+                {
+                    exist.StartDate = employeeProject.StartDate;
+                    exist.EndDate = employeeProject.EndDate;
+                    exist.EmployeeProjectStatus = employeeProject.EmployeeProjectStatus;
+                    _dbContext.Entry(exist).State = EntityState.Detached;
+                }
+                _dbContext.Entry<EmployeeProject>(employeeProject).State = EntityState.Modified;
             }
             catch (Exception ex)
             {

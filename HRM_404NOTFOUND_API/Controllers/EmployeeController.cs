@@ -42,6 +42,18 @@ namespace GroupProject_HRM_Api.Controllers
             });
         }
 
+        [HttpGet("no-project"), ActionName("Get Employee Of A Project")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> GetListEmplNotInAnyProjectAsync()
+        {
+            List<GetListEmployeeResponseIDandName> getListEmployeeResponses = await this._employeeRepository.GetListEmployeeResponseIDandNameNotInAnyProjectAsync();
+            return Ok(new
+            {
+                Success = true,
+                Data = getListEmployeeResponses
+            });
+        }
+
         [Authorize(Roles = "Manager")]
         [HttpGet("manager-all/{id}"), ActionName("Get Employee Of A Project")]
         public async Task<IActionResult> GetListEmplResponseBaseManagerAsync([FromRoute] int id)

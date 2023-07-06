@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroupProject_HRM_Library.DTOs.EmployeeProject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,9 @@ namespace GroupProject_HRM_Library.DTOs.Employee
         public int EmployeeStatus { get; set; }
         public DateTime JoinDate { get; set; } = DateTime.Now;
         public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime StartDateEmployeeProject { get; set; }
+        public DateTime EndDateEmployeeProject { get; set; }
+        public int StatusEmployeeProject { get; set; }
+        public int IdOfProjectCurrent { get; set; }
     }
 }

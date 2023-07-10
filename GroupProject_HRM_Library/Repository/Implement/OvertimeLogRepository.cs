@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using GroupProject_HRM_Library.Constaints;
 using GroupProject_HRM_Library.DTOs.OvertimeLog;
-using GroupProject_HRM_Library.DTOs.OvertimeLog;
-using GroupProject_HRM_Library.DTOs.OvertimeLog;
-using GroupProject_HRM_Library.DTOs.OvertimeLog;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
@@ -11,11 +8,6 @@ using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Models;
 using GroupProject_HRM_Library.Repository.Interface;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.Repository.Implement
 {

@@ -20,7 +20,7 @@ namespace GroupProject_HRM_Api.Controllers
         }
 
         [HttpPost, ActionName("Post Bonus")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> PostBonusAsync([FromBody] BonusRequest request)
         {
             if (!ModelState.IsValid)

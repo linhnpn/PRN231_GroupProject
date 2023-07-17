@@ -600,6 +600,11 @@ namespace GroupProject_HRM_View.Controllers
             {
                 ViewBag.Error = "Currently can't assign employee.";
             }
+            string error = TempData["msg_error"] as string;
+            if(error != null)
+            {
+                ViewBag.msgError = error;
+            }
             Dictionary<int, string> employeeDictionary = dataEmployees.Data.ToDictionary(c => c.EmployeeID, c => c.UserName);
 
             Dictionary<int, string> projectDictionary = dataProject.Data.ToDictionary(c => c.ProjectID, c => c.ProjectName);
@@ -630,6 +635,13 @@ namespace GroupProject_HRM_View.Controllers
             {
                 return Redirect(Constants.Constants.LOGIN_URL);
             }
+
+            if(DateTime.Compare(assignRequest.EndDate, assignRequest.StartDate) < 0)
+            {
+                string msg_error = "End date need later than Start date";
+                TempData["msg_error"] = msg_error;
+                return RedirectToAction("AssignEmployee");
+            }
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -637,7 +649,12 @@ namespace GroupProject_HRM_View.Controllers
             var jsonContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(assignRequest), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await client.PostAsync(EmployeeProjectApiUrl + "/AssignEmployee", jsonContent);
             string strData = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
+            if(strData.Contains("instance with the same key value"))
+            {
+                TempData["msg_error"] = "This employee is currently in the project";
+                return RedirectToAction("AssignEmployee");
+            }
+            //response.EnsureSuccessStatusCode();
             return RedirectToAction("DetailProjectIndex", new { id = assignRequest.ProjectId});
         }
 

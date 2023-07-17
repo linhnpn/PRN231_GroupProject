@@ -50,7 +50,7 @@
                         var newData = options.data;
 
                         $.ajax({
-                            url: "https://localhost:5000/api/EmployeeProject",
+                            url: "https://localhost:5000/api/EmployeeProject/update-empl",
                             type: "PUT",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));

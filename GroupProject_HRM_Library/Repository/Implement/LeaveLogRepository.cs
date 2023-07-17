@@ -8,7 +8,6 @@ using GroupProject_HRM_Library.Infrastructure;
 using GroupProject_HRM_Library.Models;
 using GroupProject_HRM_Library.Repository.Interface;
 using Newtonsoft.Json;
-using static GroupProject_HRM_Library.Enums.LeaveLogEnum;
 
 namespace GroupProject_HRM_Library.Repository.Implement
 {
@@ -33,7 +32,14 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new BadRequestException("The employee does not exist in the system.");
                 }
-
+                if (request.StartDate > request.EndDate)
+                {
+                    throw new BadRequestException("Start Date cannot greater than End Date.");
+                }
+                if (request.StartDate > DateTime.Now)
+                {
+                    throw new BadRequestException("Start Date cannot greater than Current Date.");
+                }
                 LeaveLog leaveLog = _mapper.Map<LeaveLog>(request);
                 leaveLog.Date = DateTime.Now;
 
@@ -68,7 +74,10 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The employee does not exist in the system."))
+                if (ex.Message.Contains("The employee does not exist in the system.") ||
+                    ex.Message.Contains("Start Date cannot greater than End Date.") ||
+                    ex.Message.Contains("Start Date cannot greater than Current Date.")
+                    )
                 {
                     throw new BadRequestException(JsonConvert.SerializeObject(errors));
                 }
@@ -84,6 +93,10 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 if (employee == null)
                 {
                     throw new BadRequestException("The employee does not exist in the system.");
+                }
+                if (request.StartDate > request.EndDate)
+                {
+                    throw new BadRequestException("Start Date cannot greater than End Date.");
                 }
 
                 LeaveLog leaveLog = _mapper.Map<LeaveLog>(request);
@@ -115,7 +128,9 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The employee does not exist in the system."))
+                if (ex.Message.Contains("The employee does not exist in the system.") ||
+                    ex.Message.Contains("Start Date cannot greater than End Date.")
+                    )
                 {
                     throw new BadRequestException(JsonConvert.SerializeObject(errors));
                 }

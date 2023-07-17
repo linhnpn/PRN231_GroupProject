@@ -1,8 +1,6 @@
-﻿using GroupProject_HRM_Library.DTOs.Authenticate;
-using GroupProject_HRM_Library.DTOs.LeaveLog;
+﻿using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;
-using GroupProject_HRM_Library.Models;
 using GroupProject_HRM_Library.Repository.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,7 +50,7 @@ namespace GroupProject_HRM_Api.Controllers
             return Ok(new
             {
                 Success = true,
-                Data = "Created flower bouquet successfully."
+                Data = "Created leave log successfully."
             });
         }
 

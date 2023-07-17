@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Newtonsoft.Json;
+using GroupProject_HRM_View.Models.Error;
 
 namespace GroupProject_HRM_View.Controllers
 {
@@ -114,7 +116,14 @@ namespace GroupProject_HRM_View.Controllers
             }
             else
             {
-                TempData["Error"] = "Error while calling WebAPI!";
+                string json = await response.Content.ReadAsStringAsync();
+                if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                {
+                    Error error = JsonConvert.DeserializeObject<Error>(json);
+                    string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                    TempData["Error"] = errors;
+                }
             }
 
             return Redirect("./EmployeeManagement");
@@ -147,7 +156,7 @@ namespace GroupProject_HRM_View.Controllers
             };
             HttpResponseMessage responseProject = await client.GetAsync($"{ProjectApiUrl}/projectId={id}");
             string strDataProject = await responseProject.Content.ReadAsStringAsync();
-            GetProjectResponseApi? project = JsonSerializer.Deserialize<GetProjectResponseApi>(strDataProject, options);
+            GetProjectResponseApi? project = System.Text.Json.JsonSerializer.Deserialize<GetProjectResponseApi>(strDataProject, options);
 
             if (project == null)
             {
@@ -156,7 +165,7 @@ namespace GroupProject_HRM_View.Controllers
 
             HttpResponseMessage responseEmployee = await client.GetAsync($"{EmployeeApiUrl}/no-project");
             string strData = await responseEmployee.Content.ReadAsStringAsync();
-            var employees = JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
+            var employees = System.Text.Json.JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
             ViewBag.Employees = new SelectList((System.Collections.IEnumerable)employees.Data, "EmployeeID", "EmployeeName");
             ViewBag.EmployeeProjectStatuses = new SelectList(ListEmployeeProjectStatus.Values, "StatusID", "StatusName");
 
@@ -223,7 +232,14 @@ namespace GroupProject_HRM_View.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Error while calling WebAPI!";
+                    string json = await response.Content.ReadAsStringAsync();
+                    if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(json);
+                        string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                        TempData["Error"] = errors;
+                    }
                 }
             }
             return Redirect("./TaxIndex");
@@ -307,7 +323,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+            var data = System.Text.Json.JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
 
             return View(data.Data);
         }
@@ -362,7 +378,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+            var data = System.Text.Json.JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
 
             return View(data.Data);
         }
@@ -394,7 +410,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+            var data = System.Text.Json.JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
             UpdateEmployeeRequest editEmployee = new UpdateEmployeeRequest()
             {
                 EmployeeID = data.Data.EmployeeID,
@@ -491,7 +507,7 @@ namespace GroupProject_HRM_View.Controllers
 
             if (ModelState.IsValid)
             {
-                string strData = JsonSerializer.Serialize(request);
+                string strData = System.Text.Json.JsonSerializer.Serialize(request);
                 var contentData = new StringContent(strData, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(EmployeeProjectApiUrl, contentData);
 
@@ -501,7 +517,14 @@ namespace GroupProject_HRM_View.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Error while calling WebAPI!";
+                    string json = await response.Content.ReadAsStringAsync();
+                    if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(json);
+                        string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                        TempData["Error"] = errors;
+                    }
                 }
             }
             return Redirect("./DetailProjectIndex/" + request.ProjectID);
@@ -568,11 +591,11 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var dataEmployees = JsonSerializer.Deserialize<GetEmployeesNotStartResponseApi>(strData, options);
+            var dataEmployees = System.Text.Json.JsonSerializer.Deserialize<GetEmployeesNotStartResponseApi>(strData, options);
 
             response = await client.GetAsync(ProjectApiUrl + $"/CanAssign");
             strData = await response.Content.ReadAsStringAsync();
-            var dataProject = JsonSerializer.Deserialize<GetProjectCanAssignReponseApi>(strData, options);
+            var dataProject = System.Text.Json.JsonSerializer.Deserialize<GetProjectCanAssignReponseApi>(strData, options);
             if(!dataProject.Success || !dataEmployees.Success)
             {
                 ViewBag.Error = "Currently can't assign employee.";

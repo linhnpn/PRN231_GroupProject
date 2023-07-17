@@ -1,6 +1,8 @@
 ﻿using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_View.Models.Employee;
+using GroupProject_HRM_View.Models.Error;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -173,7 +175,14 @@ namespace GroupProject_HRM_View.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Error while calling WebAPI!";
+                    string json = await response.Content.ReadAsStringAsync();
+                    if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(json);
+                        string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                        TempData["Error"] = errors;
+                    }
                 }
             }
             else
@@ -212,7 +221,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+            var data = System.Text.Json.JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
 
             return View(data.Data);
         }

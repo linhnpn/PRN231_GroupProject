@@ -1,9 +1,11 @@
 ﻿using GroupProject_HRM_Library.DTOs.LeaveLog;
 using GroupProject_HRM_Library.DTOs.OvertimeLog;
 using GroupProject_HRM_View.Models.Employee;
+using GroupProject_HRM_View.Models.Error;
 using GroupProject_HRM_View.Models.LeaveLog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -105,7 +107,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var employees = JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
+            var employees = System.Text.Json.JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
             ViewBag.Employees = new SelectList((System.Collections.IEnumerable)employees.Data, "EmployeeID", "EmployeeName");
 
             ViewBag.LeaveLogStatuses = new SelectList(ListLeaveLogStatus.Values, "StatusID", "StatusName");
@@ -142,7 +144,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var employees = JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
+            var employees = System.Text.Json.JsonSerializer.Deserialize<GetEmployeeIDandNameResponse>(strData, options);
             ViewBag.Employees = new SelectList((System.Collections.IEnumerable)employees.Data, "EmployeeID", "EmployeeName");
 
             ViewBag.LeaveLogStatuses = new SelectList(ListOvertimeStatus.Values, "StatusID", "StatusName");
@@ -202,7 +204,14 @@ namespace GroupProject_HRM_View.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Error while calling WebAPI!";
+                    string json = await response.Content.ReadAsStringAsync();
+                    if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(json);
+                        string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                        TempData["Error"] = errors;
+                    }
                 }
             }
             else
@@ -237,7 +246,7 @@ namespace GroupProject_HRM_View.Controllers
 
             if (ModelState.IsValid)
             {
-                string strData = JsonSerializer.Serialize(request);
+                string strData = System.Text.Json.JsonSerializer.Serialize(request);
                 var contentData = new StringContent(strData, System.Text.Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await client.PostAsync(OvertimeApiUrl, contentData);
@@ -248,7 +257,14 @@ namespace GroupProject_HRM_View.Controllers
                 }
                 else
                 {
-                    TempData["Message"] = "Error while calling WebAPI!";
+                    string json = await response.Content.ReadAsStringAsync();
+                    if ((int)response.StatusCode == StatusCodes.Status400BadRequest)
+                    {
+                        Error error = JsonConvert.DeserializeObject<Error>(json);
+                        string errors = error.Message.FirstOrDefault().DescriptionError.FirstOrDefault();
+
+                        TempData["Error"] = errors;
+                    }
                 }
             }
             else
@@ -362,7 +378,7 @@ namespace GroupProject_HRM_View.Controllers
             {
                 PropertyNameCaseInsensitive = true
             };
-            var data = JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
+            var data = System.Text.Json.JsonSerializer.Deserialize<GetProfileResponseApi>(strData, options);
 
             return View(data.Data);
         }

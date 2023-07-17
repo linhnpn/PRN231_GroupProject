@@ -36,9 +36,15 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new BadRequestException("Start Date cannot greater than End Date.");
                 }
-                if (request.StartDate > DateTime.Now)
+                if (request.StartDate < DateTime.Now)
                 {
                     throw new BadRequestException("Start Date cannot greater than Current Date.");
+                }
+                List<LeaveLog> leaveLogsCurrent = await _unitOfWork.LeaveLogDAO
+                    .GetLeaveLoDateAsync(request.EmployeeID, request.StartDate, request.EndDate);
+                if (leaveLogsCurrent.Count > 0)
+                {
+                    throw new BadRequestException("Already have a leave log of that day.");
                 }
                 LeaveLog leaveLog = _mapper.Map<LeaveLog>(request);
                 leaveLog.Date = DateTime.Now;
@@ -76,6 +82,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 errors.Add(error);
                 if (ex.Message.Contains("The employee does not exist in the system.") ||
                     ex.Message.Contains("Start Date cannot greater than End Date.") ||
+                    ex.Message.Contains($"Already have a leave log of that day.") ||
                     ex.Message.Contains("Start Date cannot greater than Current Date.")
                     )
                 {

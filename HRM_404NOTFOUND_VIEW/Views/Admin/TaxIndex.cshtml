@@ -58,14 +58,20 @@
                     },
                     update: function (options) {
                         var taxIDToUpdate = options.data.taxID;
-
+                        var newData = options.data;
                         $.ajax({
                             url: "https://localhost:5000/api/Tax/" + taxIDToUpdate,
                             type: "PUT", // Use the appropriate HTTP method for updating (e.g., PUT or PATCH)
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));
                             },
-                            data: options.data, // Include the updated data in the request body
+                            dataType: "json",
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                salaryMin: newData.salaryMin,
+                                salaryMax: newData.salaryMax,
+                                percent: newData.percent
+                            }),
                             success: function (result) {
                                 options.success(result);
                             },

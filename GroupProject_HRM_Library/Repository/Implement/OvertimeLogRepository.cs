@@ -31,7 +31,11 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 {
                     throw new BadRequestException("The employee does not exist in the system.");
                 }
-
+                List<OvertimeLog> overtimeLogs = await _unitOfWork.OvertimeLogDAO.GetOvertimesAsync(request.EmployeeID, request.OverTimeDate);
+                if (overtimeLogs.Count > 0)
+                {
+                    throw new BadRequestException("Already have OT in that day.");
+                }
                 OvertimeLog overtimeLog = _mapper.Map<OvertimeLog>(request);
                 overtimeLog.LogDate = DateTime.Now;
 
@@ -59,7 +63,8 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 };
 
                 errors.Add(error);
-                if (ex.Message.Contains("The employee does not exist in the system."))
+                if (ex.Message.Contains("The employee does not exist in the system.") ||
+                    ex.Message.Contains("Already have OT in that day."))
                 {
                     throw new BadRequestException(JsonConvert.SerializeObject(errors));
                 }

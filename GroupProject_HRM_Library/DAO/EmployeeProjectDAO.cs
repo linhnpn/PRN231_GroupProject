@@ -90,12 +90,12 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
-        public async Task<EmployeeProject> GetManagerProjectWorkInProgress()
+        public async Task<EmployeeProject> GetManagerProjectWorkInProgress(int projectId)
         {
             try
             {
                 return _dbContext.EmployeeProjects.Include(p => p.Employee)
-                    .Where(x => x.Employee.RoleID == (int)EmployeeRole.Manager && x.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress).FirstOrDefault();
+                    .Where(x => x.Employee.RoleID == (int)EmployeeRole.Manager && x.ProjectID == projectId && x.EmployeeProjectStatus == (int)EmployeeProjectEnum.EmpProStatus.WorkInProgress).FirstOrDefault();
             }
             catch (Exception ex)
             {

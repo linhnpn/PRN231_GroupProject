@@ -1,7 +1,6 @@
 using AutoMapper;
 using GroupProject_HRM_Library.DTOs.Authenticate;
 using GroupProject_HRM_Library.DTOs.Employee;
-using GroupProject_HRM_Library.DTOs.Income;
 using GroupProject_HRM_Library.Enums;
 using GroupProject_HRM_Library.Errors;
 using GroupProject_HRM_Library.Exceptions;

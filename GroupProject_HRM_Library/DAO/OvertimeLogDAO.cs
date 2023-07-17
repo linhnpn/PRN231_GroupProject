@@ -27,6 +27,20 @@ namespace GroupProject_HRM_Library.DAO
             }
         }
 
+        public async Task<List<OvertimeLog>> GetOvertimesAsync
+                                            (int emplID, DateTime date)
+        {
+            try
+            {
+                return await this._dbContext.OvertimeLogs
+                                            .Where(x => x.EmployeeID == emplID && x.OverTimeDate.Date == date.Date)
+                                            .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public async Task<OvertimeLog> GetOvertimeLogAsync(int id)
         {
             try

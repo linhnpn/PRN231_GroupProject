@@ -1,10 +1,5 @@
 ﻿using GroupProject_HRM_Library.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GroupProject_HRM_Library.DAO
 {
@@ -74,12 +69,27 @@ namespace GroupProject_HRM_Library.DAO
                 {
                     return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
-                                            .Where(x => x.EmployeeID == emplID && x.Date > start && x.Date < end)
+                                            .Where(x => x.EmployeeID == emplID && x.EndDate >= start && x.StartDate <= end)
                                             .ToListAsync();
                 }
                 return await this._dbContext.LeaveLogs
                                             .Include(x => x.Employee)
-                                            .Where(x => x.EmployeeID == emplID && x.Date > start && x.Date < end && x.LeaveLogStatus == status)
+                                            .Where(x => x.EmployeeID == emplID && x.EndDate >= start && x.StartDate <= end && x.LeaveLogStatus == status)
+                                            .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<LeaveLog>> GetLeaveLoDateAsync
+                                            (int emplID, DateTime start, DateTime end)
+        {
+            try
+            {
+                return await this._dbContext.LeaveLogs
+                                            .Where(x => x.EmployeeID == emplID && x.EndDate >= start && x.StartDate <= end)
                                             .ToListAsync();
             }
             catch (Exception ex)

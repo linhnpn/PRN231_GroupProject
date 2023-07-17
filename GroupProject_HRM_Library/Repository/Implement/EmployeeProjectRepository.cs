@@ -166,7 +166,7 @@ namespace GroupProject_HRM_Library.Repository.Implement
                 }
                 if(employeeInfor.RoleID == (int)EmployeeRole.Manager)
                 {
-                    var managerProject = await this._unitOfWork.EmployeeProjectDAO.GetManagerProjectWorkInProgress();
+                    var managerProject = await this._unitOfWork.EmployeeProjectDAO.GetManagerProjectWorkInProgress(assignRequest.ProjectId);
                     if(managerProject != null)
                     {
                         throw new BadRequestException("The project now has a manager.");

@@ -86,7 +86,12 @@
                         $.ajax({
                             url: "https://localhost:5000/api/Project",
                             type: "POST",
-                            data: JSON.stringify(newData),
+                            data: JSON.stringify({
+                                    projectName: newData.projectName,
+                                    projectDescription: newData.projectDescription,
+                                    projectStatus: newData.projectStatus.value,
+                                    projectBonus: newData.projectBonus
+                            }),
                             contentType: "application/json",
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem('ACCESS_TOKEN'));

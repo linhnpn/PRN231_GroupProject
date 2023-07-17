@@ -113,7 +113,7 @@ namespace GroupProject_HRM_Api.Controllers
         // PUT api/<TaxController>/5
         [HttpPut("{id}"), ActionName("PutTax")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutTaxAsync([FromRoute]int id, [FromBody] UpdateTaxRequest value)
+        public async Task<IActionResult> PutTaxAsync([FromRoute] int id,[FromBody] UpdateTaxRequest value)
         {
             if (!ModelState.IsValid)
             {
